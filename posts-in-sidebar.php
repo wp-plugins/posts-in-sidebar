@@ -5,7 +5,7 @@
 	Plugin URI: http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
 	Author: Aldo Latino
 	Author URI: http://www.aldolat.it/
-	Version: 1.0
+	Version: 1.0.1
 	License: GPLv3 or later
 */
 

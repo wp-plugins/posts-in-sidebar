@@ -4,7 +4,7 @@ Donate link: http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
 Tags: post, sidebar, widget
 Requires at least: 3.1
 Tested up to: 3.4.2
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -46,16 +46,24 @@ You have to edit your functions.php file. [Ask in the forum](http://wordpress.or
 
 == Changelog ==
 
-= 0.1 =
+= 1.0.1 =
+
+* Small typo in readme.txt
+
+= 1.0 =
 
 * First release of the plugin.
 
 == Upgrade Notice ==
 
-= 0.1 =
+= 1.0.1 =
+
+No notice to display.
+
+= 1.0 =
 
 No notice to display.
 
 == Credits ==
 
-I would say "thank you" to [Jeff](http://profiles.wordpress.org/specialk/ "Jeff's profile page") for helping me in revisioning this plugin.
+I would like to say "thank you" to all the people who helped me in revisioning this plugin.
