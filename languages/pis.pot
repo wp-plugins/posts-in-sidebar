@@ -1,0 +1,322 @@
+# Copyright (C) 2012 Posts in Sidebar
+# This file is distributed under the same license as the Posts in Sidebar package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Posts in Sidebar 1.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/posts-in-sidebar\n"
+"POT-Creation-Date: 2012-09-29 19:45:49+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: posts-in-sidebar-widget.php:27
+msgid "Display a list of posts in a widget"
+msgstr ""
+
+#. #-#-#-#-#  pis.pot (Posts in Sidebar 1.1)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: posts-in-sidebar-widget.php:37
+msgid "Posts in Sidebar"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:129
+msgid "Posts"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:154 posts-in-sidebar.php:60
+msgid "Category:"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:157 posts-in-sidebar.php:63
+msgid "Tags:"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:162 posts-in-sidebar.php:68
+#: posts-in-sidebar.php:255
+msgid "More posts &rarr;"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:180
+msgid "The title of the widget"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:184 posts-in-sidebar-widget.php:264
+msgid "Title"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:191
+msgid "Get these posts"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:195
+msgid "Author"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:200 posts-in-sidebar-widget.php:218
+#: posts-in-sidebar-widget.php:237
+msgid "None"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:214
+msgid "Category"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:232
+msgid "Tag"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:251
+msgid "How many posts to display"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:257
+msgid "Order by"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:261
+msgid "Date"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:267
+msgid "ID"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:270
+msgid "Modified"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:273
+msgid "Random"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:279
+msgid "Order"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:283
+msgid "Ascending"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:286
+msgid "Descending"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:292
+msgid "Number of posts to skip"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:298
+msgid "Post status"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:312
+msgid "Post meta key"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:318
+msgid "Post meta value"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:325
+msgid "Ignore sticky posts"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:327
+msgid ""
+"Sticky posts are automatically ignored if you set up an author or a taxonomy "
+"in this widget."
+msgstr ""
+
+#: posts-in-sidebar-widget.php:334
+msgid "Exclude posts"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:336
+msgid "Use <code>CTRL+clic</code> to select/deselect multiple items."
+msgstr ""
+
+#: posts-in-sidebar-widget.php:340
+msgid "Exclude posts from these categories"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:353
+msgid "Exclude posts from these tags"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:366
+msgid "The title of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:371
+msgid "Display the title of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:377
+msgid "Link the title to the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:383
+msgid "Show an arrow after the title"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:389
+msgid "The featured image of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:394
+msgid "Display the featured image of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:399
+msgid "Size of the thumbnail"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:415
+msgid ""
+"Note that in order to use image sizes different from the WordPress "
+"standards, add them to your functions.php. See the %1$sCodex%2$s for further "
+"information."
+msgstr ""
+
+#: posts-in-sidebar-widget.php:419
+msgid "You can also use a plugin that could help you in doing it."
+msgstr ""
+
+#: posts-in-sidebar-widget.php:425
+msgid "The excerpt of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:430
+msgid "Show an excerpt of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:435
+msgid "Length of the excerpt (in words)"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:442
+msgid "Show an arrow after the excerpt"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:450
+msgid "The date and the comments of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:455
+msgid "Display the date of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:461
+msgid "Display the number of comments"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:467
+msgid "The categories of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:472
+msgid "Show the categories of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:477
+msgid "Text before categories list"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:483
+msgid "Use this separator between categories"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:486 posts-in-sidebar-widget.php:516
+msgid "A space will be added after the separator."
+msgstr ""
+
+#: posts-in-sidebar-widget.php:491
+msgid "The tags of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:496
+msgid "Show the tags of the post"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:501
+msgid "Text before tags list"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:507
+msgid "Use this hashtag"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:513
+msgid "Use this separator between tags"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:521
+msgid "The link to the archive"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:526
+msgid "Show the link to the taxonomy archive"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:531
+msgid "Link to"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:535
+msgid "Author Archive"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:538
+msgid "Category Archive"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:541
+msgid "Tag Archive"
+msgstr ""
+
+#: posts-in-sidebar-widget.php:547
+msgid "Use this text for archive link"
+msgstr ""
+
+#: posts-in-sidebar.php:107
+msgid "Permalink to %s"
+msgstr ""
+
+#: posts-in-sidebar.php:157
+msgid "Read the full post"
+msgstr ""
+
+#: posts-in-sidebar.php:207
+msgid "Leave a comment"
+msgstr ""
+
+#: posts-in-sidebar.php:207
+msgid "1 Comment"
+msgstr ""
+
+#: posts-in-sidebar.php:207
+msgid "% Comments"
+msgstr ""
+
+#: posts-in-sidebar.php:269
+msgid "No posts yet."
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Publish a list of posts in your sidebar"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Aldo Latino"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.aldolat.it/"
+msgstr ""
