@@ -4,7 +4,7 @@ Donate link: http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
 Tags: post, sidebar, widget
 Requires at least: 3.1
 Tested up to: 3.4.2
-Stable tag: 1.0.2
+Stable tag: 1.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -45,6 +45,12 @@ You have to edit your functions.php file. [Ask in the forum](http://wordpress.or
 3. The widget displays three posts from a particular category. At the bottom you can view the link to the taxonomy which we retrieved the posts from.
 
 == Changelog ==
+
+= 1.1 =
+
+* Enhancement: Now it is possible to show the categories of the post
+* Enhancement: Now it is possible to exclude posts coming from some categories and/or tags
+* Moved the widget section into a separate file.
 
 = 1.0.2 =
 
