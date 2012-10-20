@@ -1,11 +1,15 @@
 <?php
 
-/*
+/**
  * The widget
+ *
+ * @package PostsInSidebar
  */
 
 /**
  * Register the widget
+ *
+ * @since 1.0
  */
 
 function pis_load_widgets() {
@@ -16,6 +20,8 @@ add_action( 'widgets_init', 'pis_load_widgets' );
 
 /**
  * Create the widget
+ *
+ * @since 1.0
  */
 
 class PIS_Posts_In_Sidebar extends WP_Widget {
@@ -145,7 +151,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'display_date'  => false,
 			'display_image' => false,
 			'image_size'    => 'thumbnail',
-			'excerpt'       => true,
+			'excerpt'       => 'excerpt',
 			'arrow'         => false,
 			'exc_length'    => 20,
 			'exc_arrow'     => false,
@@ -165,7 +171,6 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$ignore_sticky = (bool) $instance['ignore_sticky'];
 		$display_title = (bool) $instance['display_title'];
 		$link_on_title = (bool) $instance['link_on_title'];
-		$excerpt       = (bool) $instance['excerpt'];
 		$display_date  = (bool) $instance['display_date'];
 		$display_image = (bool) $instance['display_image'];
 		$arrow         = (bool) $instance['arrow'];
@@ -422,13 +427,28 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 			<hr />
 
-			<h4><?php _e( 'The excerpt of the post', 'pis' ); ?></h4>
+			<h4><?php _e( 'The text of the post', 'pis' ); ?></h4>
 
 			<p>
-				<input class="checkbox" type="checkbox" <?php checked( $excerpt ); ?> value="1" id="<?php echo $this->get_field_id( 'excerpt' ); ?>" name="<?php echo $this->get_field_name( 'excerpt' ); ?>" />
-				<label for="<?php echo $this->get_field_id( 'excerpt' ); ?>">
-					<?php _e( 'Show an excerpt of the post', 'pis' ); ?>
+				<label for="<?php echo $this->get_field_id('excerpt'); ?>">
+					<?php _e( 'What type of text to display', 'pis' ); ?>
 				</label>
+				<select name="<?php echo $this->get_field_name('excerpt'); ?>">
+					<option <?php selected( 'excerpt', $instance['excerpt']); ?> value="excerpt">
+						<?php _e( 'The excerpt', 'pis' ); ?>
+					</option>
+					<option <?php selected( 'content', $instance['excerpt']); ?> value="content">
+						<?php _e( 'The entire content', 'pis' ); ?>
+					</option>
+					<option <?php selected( 'none', $instance['excerpt']); ?> value="none">
+						<?php _e( 'Do not show any text', 'pis' ); ?>
+					</option>
+				</select>
+			</p>
+			<p>
+				<em>
+					<?php _e( 'Shortcodes will be stripped.', 'pis' );?>
+				</em>
 			</p>
 			<p>
 				<label for="<?php echo $this->get_field_id( 'exc_length' ); ?>">
@@ -547,6 +567,11 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 					<?php _e( 'Use this text for archive link', 'pis' ); ?>
 				</label>
 				<input class="widefat" id="<?php echo $this->get_field_id( 'archive_text' ); ?>" name="<?php echo $this->get_field_name( 'archive_text' ); ?>" type="text" value="<?php echo $instance['archive_text']; ?>" />
+			</p>
+			<p>
+				<em>
+					<?php _e( 'Please, note that if you don\'t select any taxonomy, the link won\'t appear.', 'pis' ); ?>
+				</em>
 			</p>
 
 		</div>

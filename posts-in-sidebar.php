@@ -1,36 +1,43 @@
 <?php
-/*
-	Plugin Name: Posts in Sidebar
-	Description:  Publish a list of posts in your sidebar
-	Plugin URI: http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
-	Author: Aldo Latino
-	Author URI: http://www.aldolat.it/
-	Version: 1.1
-	License: GPLv3 or later
-*/
-
-/*
-	Copyright (C) 2009, 2012  Aldo Latino  (email : aldolat@gmail.com)
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+/**
+ * Plugin Name: Posts in Sidebar
+ * Description:  Publish a list of posts in your sidebar
+ * Plugin URI: http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
+ * Author: Aldo Latino
+ * Author URI: http://www.aldolat.it/
+ * Version: 1.2
+ * License: GPLv3 or later
+ * Text Domain: pis
+ * Domain Path: /languages/
+ *
+ * Copyright (C) 2009, 2012  Aldo Latino  (email : aldolat@gmail.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package PostsInSidebar
+ * @version 1.2
+ * @author Aldo Latino <aldolat@gmail.com>
+ * @copyright Copyright (c) 2012, Aldo Latino
+ * @link http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
+ * @license http://www.gnu.org/licenses/gpl.html
+ */
 
 /**
  * The core function
- * 
+ *
+ * @since 1.0
  */
- 
 function pis_posts_in_sidebar( $args ) {
 	$defaults = array(
 		'author'        => NULL,   // Author nicename, NOT name
@@ -51,7 +58,7 @@ function pis_posts_in_sidebar( $args ) {
 		'display_date'  => false,
 		'display_image' => false,
 		'image_size'    => 'thumbnail',
-		'excerpt'       => true,
+		'excerpt'       => 'excerpt', // can be "excerpt" or "content"
 		'arrow'         => false,
 		'exc_length'    => 20,      // In words
 		'exc_arrow'     => false,
@@ -116,7 +123,7 @@ function pis_posts_in_sidebar( $args ) {
 						</p>
 					<?php } // Close Display title ?>
 
-					<?php /* The content */ ?>
+					<?php /* The post content */ ?>
 					<?php if( $display_image || $excerpt ) { ?>
 
 						<p class="pis-excerpt">
@@ -134,8 +141,9 @@ function pis_posts_in_sidebar( $args ) {
 							} ?>
 
 							<?php /* The text */ ?>
-							<?php if( $excerpt ) { ?>
-								<?php
+							<?php if( $excerpt == 'content' ) {
+								echo strip_shortcodes( $linked_posts->post->post_content );
+							} elseif( $excerpt == 'excerpt' || $excerpt == '1' /* This condition takes care of the boolean value coming from version 1.1 */ ) {
 								// If we have a user-defined excerpt...
 								if( $linked_posts->post->post_excerpt ) {
 									$excerpt_text = strip_tags( $linked_posts->post->post_excerpt );
@@ -148,8 +156,8 @@ function pis_posts_in_sidebar( $args ) {
 									/* BONUS: Excerpt in characters */
 									// $excerpt_text = substr( strip_tags( $linked_posts->post->post_content ), 0, $exc_length ) . '&hellip;';
 
-								} ?>
-								<?php echo $excerpt_text; ?>
+								}
+								echo $excerpt_text; ?>
 
 								<?php /* The arrow */ ?>
 								<?php if( $exc_arrow ) { ?>
@@ -159,7 +167,7 @@ function pis_posts_in_sidebar( $args ) {
 										</a>
 									</span>
 								<?php } ?>
-							<?php } // Close The excerpt ?>
+							<?php } // Close The post content ?>
 
 						</p>
 
@@ -278,32 +286,36 @@ function pis_posts_in_sidebar( $args ) {
 
 <?php }
 
-/*
- * Include the widget
- */
 
+/**
+ * Include the widget
+ *
+ * @since 1.1
+ */
 include( 'posts-in-sidebar-widget.php' );
 
 
 /**
  * Make plugin available for i18n
- * Translations must be archived in the /languages directory
+ *
+ * Translations must be archived in the /languages/ directory
  * The name of each translation file must be:
+ *
  * ITALIAN:
  * pis-it_IT.po
  * pis-it_IT.mo
+ *
  * GERMAN:
  * pis-de_DE.po
  * pis-de_DE.po
+ *
  * and so on.
  *
  * @since 0.1
  */
-
 function pis_load_languages() {
 	load_plugin_textdomain( 'pis', false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
 }
-
 add_action( 'plugins_loaded', 'pis_load_languages' );
 
 /***********************************************************************

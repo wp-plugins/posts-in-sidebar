@@ -1,7 +1,8 @@
 <?php
-/*
+/**
  * Posts in Sidebar Uninstall
  *
+ * @package PostsInSidebar
  * @since 1.0
  */
 

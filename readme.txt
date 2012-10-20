@@ -4,7 +4,7 @@ Donate link: http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
 Tags: post, sidebar, widget
 Requires at least: 3.1
 Tested up to: 3.4.2
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -32,19 +32,24 @@ Yes. you can retrieve posts using author archive and/or category archive and/or 
 
 = How can I float my images? =
 
-You have to edit your CSS file (usually style.css). You can target the image adding a new style like this at the end of your CSS file: .pis-excerpt img { float: left; margin-right: 10px; }
+You have to edit your CSS file (usually `style.css`). You can target the image adding a new style like this at the end of your CSS file: `.pis-excerpt img { float: left; margin-right: 10px; }`
 
 = How can I add new size for my images? =
 
-You have to edit your functions.php file. [Ask in the forum](http://wordpress.org/support/plugin/posts-in-sidebar) of this plugin, for more informations.
+You have to edit your `functions.php` file. [Ask in the forum](http://wordpress.org/support/plugin/posts-in-sidebar) of this plugin, for more informations.
 
 == Screenshots ==
 
 1. The widget panel
-2. Three widgets in action. Top widget: a single post with all the informations. Middle widget: a single post with few informations. Bottom widget: a single post displayed only with the featured image.
+2. Three widgets in action. *Top widget*: a single post with all the informations. *Middle widget*: a single post with few informations. *Bottom widget*: a single post displayed only with the featured image.
 3. The widget displays three posts from a particular category. At the bottom you can view the link to the taxonomy which we retrieved the posts from.
 
 == Changelog ==
+
+= 1.2 =
+
+* Enhancement: Now the user can display the entire content for each post. Feature request from [sjmsing](http://wordpress.org/support/topic/plugin-posts-in-sidebar-great-plugin-feature-request)
+* Moved screenshots to `/assets/` directory.
 
 = 1.1 =
 
@@ -54,17 +59,21 @@ You have to edit your functions.php file. [Ask in the forum](http://wordpress.or
 
 = 1.0.2 =
 
-* Updated Credits section.
+* Updated *Credits* section.
 
 = 1.0.1 =
 
-* Small typo in readme.txt.
+* Small typo in `readme.txt`.
 
 = 1.0 =
 
 * First release of the plugin.
 
 == Upgrade Notice ==
+
+= 1.2 =
+
+Version 1.2 has changed the option to display the text of the post. When upgrading to version 1.2, check every Posts in Sidebar widget at section The text of the post to make sure that the option fits your needs.
 
 = 1.0.2 =
 
@@ -80,4 +89,4 @@ No notice to display.
 
 == Credits ==
 
-I would like to say "thank you" to all the people who helped me, in particular [Jeff](http://profiles.wordpress.org/specialk/ "Jeff's profile page") for helping me in revisioning this plugin.
+I would like to say *Thank You* to all the people who helped me, in particular [Jeff](http://profiles.wordpress.org/specialk/ "Jeff's profile page") for helping me in revisioning this plugin.
