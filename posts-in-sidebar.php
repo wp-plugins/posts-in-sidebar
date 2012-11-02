@@ -5,7 +5,7 @@
  * Plugin URI: http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
- * Version: 1.2
+ * Version: 1.2.1
  * License: GPLv3 or later
  * Text Domain: pis
  * Domain Path: /languages/
@@ -26,9 +26,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @package PostsInSidebar
- * @version 1.2
+ * @version 1.2.1
  * @author Aldo Latino <aldolat@gmail.com>
- * @copyright Copyright (c) 2012, Aldo Latino
+ * @copyright Copyright (c) 2009-2012, Aldo Latino
  * @link http://www.aldolat.it/wordpress/wordpress-plugins/posts-in-sidebar/
  * @license http://www.gnu.org/licenses/gpl.html
  */
