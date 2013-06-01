@@ -3,8 +3,8 @@ Contributors: aldolat
 Donate link: http://dev.aldolat.it/projects/posts-in-sidebar/
 Tags: post, sidebar, widget
 Requires at least: 3.3
-Tested up to: 3.5.1
-Stable tag: 1.6
+Tested up to: 3.6
+Stable tag: 1.7
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -45,6 +45,15 @@ You have to edit your `functions.php` file. [Ask in the forum](http://wordpress.
 3. The widget displays three posts from a particular category. At the bottom you can view the link to the taxonomy which we retrieved the posts from.
 
 == Changelog ==
+
+= 1.7 =
+
+* New: The widget can display the author of the post.
+* New: Now the user can choose which type of posts to display: posts, pages, custom post types, etc.
+* New: The widget can display the full content (as in single posts).
+* New: Now the user can add a custom "Read more" text.
+* Added French translation by Thérèse Lachance.
+* Code improvements and sanitization.
 
 = 1.6 =
 

@@ -5,7 +5,7 @@
  * Plugin URI: http://dev.aldolat.it/projects/posts-in-sidebar/
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
- * Version: 1.6
+ * Version: 1.7
  * License: GPLv3 or later
  * Text Domain: pis
  * Domain Path: /languages/
@@ -35,41 +35,45 @@
  */
 function pis_posts_in_sidebar( $args ) {
 	$defaults = array(
-		'author'        => NULL,   // Author nicename, NOT name
-		'cat'           => NULL,   // Category slugs, comma separated
-		'tag'           => NULL,   // Tag slugs, comma separated
-		'number'        => get_option( 'posts_per_page' ),
-		'orderby'       => 'date',
-		'order'         => 'DESC',
-		'cat_not_in'    => '',
-		'tag_not_in'    => '',
-		'offset_number' => '',
-		'post_status'   => 'publish',
-		'post_meta_key' => '',
-		'post_meta_val' => '',
-		'ignore_sticky' => false,
-		'display_title' => true,
-		'link_on_title' => true,
-		'display_date'  => false,
-		'linkify_date'  => true,
-		'display_image' => false,
-		'image_size'    => 'thumbnail',
-		'excerpt'       => 'excerpt', // can be "excerpt" or "content"
-		'arrow'         => false,
-		'exc_length'    => 20,      // In words
-		'exc_arrow'     => false,
-		'comments'      => false,
-		'categories'    => false,
-		'categ_text'    => __( 'Category:', 'pis' ),
-		'categ_sep'     => ',',
-		'tags'          => false,
-		'tags_text'     => __( 'Tags:', 'pis' ),
-		'hashtag'       => '#',
-		'tag_sep'       => '',
-		'archive_link'  => false,
-		'link_to'       => 'category',
-		'archive_text'  => __( 'More posts &rarr;', 'pis' ),
-		'nopost_text'   => __( 'No posts yet.', 'pis' ),
+		'post_type'      => 'post', // post, page, media, or any custom post type
+		'author'         => NULL,   // Author nicename, NOT name
+		'cat'            => NULL,   // Category slugs, comma separated
+		'tag'            => NULL,   // Tag slugs, comma separated
+		'number'         => get_option( 'posts_per_page' ),
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'cat_not_in'     => '',
+		'tag_not_in'     => '',
+		'offset_number'  => '',
+		'post_status'    => 'publish',
+		'post_meta_key'  => '',
+		'post_meta_val'  => '',
+		'ignore_sticky'  => false,
+		'display_title'  => true,
+		'link_on_title'  => true,
+		'display_image'  => false,
+		'image_size'     => 'thumbnail',
+		'excerpt'        => 'excerpt', // can be "full_content", "content", "excerpt", "none"
+		'arrow'          => false,
+		'exc_length'     => 20,      // In words
+		'the_more'       => __( 'Read more&hellip;', 'pis' ),
+		'exc_arrow'      => false,
+		'display_author' => false,
+		'linkify_author' => false,
+		'display_date'   => false,
+		'linkify_date'   => false,
+		'comments'       => false,
+		'categories'     => false,
+		'categ_text'     => __( 'Category:', 'pis' ),
+		'categ_sep'      => ',',
+		'tags'           => false,
+		'tags_text'      => __( 'Tags:', 'pis' ),
+		'hashtag'        => '#',
+		'tag_sep'        => '',
+		'archive_link'   => false,
+		'link_to'        => 'category',
+		'archive_text'   => __( 'More posts &rarr;', 'pis' ),
+		'nopost_text'    => __( 'No posts yet.', 'pis' ),
 	);
 	$args = wp_parse_args( $args, $defaults );
 	extract( $args, EXTR_SKIP );
@@ -80,6 +84,7 @@ function pis_posts_in_sidebar( $args ) {
 
 	// Build the array to get posts
 	$params = array(
+		'post_type'          => $post_type,
 		'author_name'        => $author, // Use nicenames.
 		'category_name'      => $cat,
 		'tag'                => $tag,
@@ -109,8 +114,8 @@ function pis_posts_in_sidebar( $args ) {
 			<?php while( $linked_posts->have_posts() ) : $linked_posts->the_post(); ?>
 
 				<?php // Assign the class 'current-post' if this is the post of the main loop ?>
-				<?php if ( is_single() && $single_post_id == $post->ID ) { 
-					$postclass = 'current-post pis-li'; 
+				<?php if ( is_single() && $single_post_id == $linked_posts->post->ID ) {
+					$postclass = 'current-post pis-li';
 				} else {
 					$postclass = 'pis-li';
 				}
@@ -152,9 +157,11 @@ function pis_posts_in_sidebar( $args ) {
 							} ?>
 
 							<?php /* The text */ ?>
-							<?php if ( $excerpt == 'content' ) {
+							<?php if ( $excerpt == 'full_content' ) {
+								the_content();
+							} else if ( $excerpt == 'content' ) {
 								echo strip_shortcodes( $linked_posts->post->post_content );
-							} elseif ( $excerpt == 'excerpt' || $excerpt == '1' /* This condition takes care of the boolean value coming from version 1.1 */ ) {
+							} else if ( $excerpt == 'excerpt' || $excerpt == '1' ) { /* The latter condition takes care of the boolean value coming from version 1.1 */
 								// If we have a user-defined excerpt...
 								if ( $linked_posts->post->post_excerpt ) {
 									$excerpt_text = strip_tags( $linked_posts->post->post_excerpt );
@@ -170,34 +177,55 @@ function pis_posts_in_sidebar( $args ) {
 								}
 								echo $excerpt_text; ?>
 
-								<?php /* The arrow */ ?>
-								<?php if ( $exc_arrow ) { ?>
-									&nbsp;<span class="pis-arrow">
+								<?php /* The 'Read more' and the Arrow */ ?>
+								<?php if ( $the_more || $exc_arrow ) {
+									if ( $exc_arrow ) $the_arrow = '<span class="pis-arrow">&rarr;</span>'; ?>
+									<span class="pis-more">
 										<a href="<?php echo the_permalink(); ?>" title="<?php esc_attr_e( 'Read the full post', 'pis' ); ?>" rel="bookmark">
-											&rarr;
+											<?php echo $the_more . ' ' . $the_arrow; ?>
 										</a>
 									</span>
-								<?php } ?>
-							<?php } // Close The post content ?>
+								<?php }
+							} // Close The text ?>
 
 						</p>
 
 					<?php }	// Close The content ?>
 
 					<?php /* The date and the comments */ ?>
-					<?php if ( $display_date || $comments ) { ?>
+					<?php if ( $display_author || $display_date || $comments ) { ?>
 						<p class="pis-utility">
 					<?php } ?>
 
+						<?php /* The author */ ?>
+						<?php if ( $display_author ) { ?>
+							<span class="pis-author">
+								<?php if ( $linkify_author ) { ?>
+									<?php
+									$author_title = sprintf( __( 'View all posts by %s', 'pis' ), get_the_author() );
+									$author_link  = get_author_posts_url( get_the_author_meta( 'ID' ) );
+									?>
+									<a class="pis-author-link" href="<?php echo $author_link; ?>" title="<?php echo esc_attr( $author_title ); ?>" rel="bookmark">
+										<?php echo get_the_author(); ?>
+									</a>
+								<?php } else {
+									echo get_the_author();
+								} ?>
+							</span>
+						<?php } ?>
+
 						<?php /* The date */ ?>
 						<?php if ( $display_date ) { ?>
-
+							<?php if ( $display_author ) { ?>
+								<span class="pis-separator"> - </span>
+							<?php } ?>
 							<span class="pis-date">
 								<?php if ( $linkify_date ) { ?>
-									<a class="pis-date-link" href="<?php the_permalink(); ?>" title="<?php esc_attr_e( sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
+									<?php $date_title = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) ); ?>
+									<a class="pis-date-link" href="<?php the_permalink(); ?>" title="<?php echo esc_attr( $date_title ); ?>" rel="bookmark">
 										<?php echo get_the_date(); ?>
 									</a>
-								<?php } else { 
+								<?php } else {
 									echo get_the_date();
 								} ?>
 							</span>
@@ -223,7 +251,7 @@ function pis_posts_in_sidebar( $args ) {
 
 						<?php /* The comments */ ?>
 						<?php if ( $comments ) { ?>
-							<?php if ( $display_date ) { ?>
+							<?php if ( $display_author || $display_date ) { ?>
 								<span class="pis-separator"> - </span>
 							<?php } ?>
 							<span class="pis-comments">
@@ -231,7 +259,7 @@ function pis_posts_in_sidebar( $args ) {
 							</span>
 						<?php } ?>
 
-					<?php if ( $display_date || $comments ) { ?>
+					<?php if ( $display_author || $display_date || $comments ) { ?>
 						</p>
 					<?php } ?>
 
