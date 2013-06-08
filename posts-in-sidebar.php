@@ -5,7 +5,7 @@
  * Plugin URI: http://dev.aldolat.it/projects/posts-in-sidebar/
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
- * Version: 1.7
+ * Version: 1.8
  * License: GPLv3 or later
  * Text Domain: pis
  * Domain Path: /languages/
@@ -39,6 +39,7 @@ function pis_posts_in_sidebar( $args ) {
 		'author'         => NULL,   // Author nicename, NOT name
 		'cat'            => NULL,   // Category slugs, comma separated
 		'tag'            => NULL,   // Tag slugs, comma separated
+		'post_format'    => '',
 		'number'         => get_option( 'posts_per_page' ),
 		'orderby'        => 'date',
 		'order'          => 'DESC',
@@ -51,18 +52,22 @@ function pis_posts_in_sidebar( $args ) {
 		'ignore_sticky'  => false,
 		'display_title'  => true,
 		'link_on_title'  => true,
+		'arrow'          => false,
 		'display_image'  => false,
 		'image_size'     => 'thumbnail',
 		'excerpt'        => 'excerpt', // can be "full_content", "content", "excerpt", "none"
-		'arrow'          => false,
 		'exc_length'     => 20,      // In words
 		'the_more'       => __( 'Read more&hellip;', 'pis' ),
 		'exc_arrow'      => false,
 		'display_author' => false,
+		'author_text'    => __( 'By', 'pis' ),
 		'linkify_author' => false,
 		'display_date'   => false,
+		'date_text'      => __( 'Published on', 'pis' ),
 		'linkify_date'   => false,
 		'comments'       => false,
+		'comments_text'  => __( 'Comments:', 'pis' ),
+		'utility_sep'    => '&middot;',
 		'categories'     => false,
 		'categ_text'     => __( 'Category:', 'pis' ),
 		'categ_sep'      => ',',
@@ -84,20 +89,21 @@ function pis_posts_in_sidebar( $args ) {
 
 	// Build the array to get posts
 	$params = array(
-		'post_type'          => $post_type,
-		'author_name'        => $author, // Use nicenames.
-		'category_name'      => $cat,
-		'tag'                => $tag,
-		'posts_per_page'     => $number,
-		'orderby'            => $orderby,
-		'order'              => $order,
-		'category__not_in'   => $cat_not_in,
-		'tag__not_in'        => $tag_not_in,
-		'offset'             => $offset_number,
-		'post_status'        => $post_status,
-		'meta_key'           => $post_meta_key,
-		'meta_value'         => $post_meta_val,
-		'ignore_sticky_posts'=> $ignore_sticky
+		'post_type'           => $post_type,
+		'author_name'         => $author, // Use nicenames.
+		'category_name'       => $cat,
+		'tag'                 => $tag,
+		'post_format'         => $post_format,
+		'posts_per_page'      => $number,
+		'orderby'             => $orderby,
+		'order'               => $order,
+		'category__not_in'    => $cat_not_in,
+		'tag__not_in'         => $tag_not_in,
+		'offset'              => $offset_number,
+		'post_status'         => $post_status,
+		'meta_key'            => $post_meta_key,
+		'meta_value'          => $post_meta_val,
+		'ignore_sticky_posts' => $ignore_sticky
 	);
 	$linked_posts = new WP_Query( $params ); ?>
 
@@ -127,7 +133,8 @@ function pis_posts_in_sidebar( $args ) {
 					<?php if ( $display_title ) { ?>
 						<p class="pis-title">
 							<?php if ( $link_on_title ) { ?>
-								<a class="pis-title-link" href="<?php the_permalink(); ?>" title="<?php esc_attr_e( sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
+								<?php $title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) ); ?>
+								<a class="pis-title-link" href="<?php the_permalink(); ?>" title="<?php echo esc_attr( $title_link ); ?>" rel="bookmark">
 							<?php } ?>
 									<?php the_title(); ?>
 									<?php if ( $arrow ) { ?>
@@ -147,12 +154,11 @@ function pis_posts_in_sidebar( $args ) {
 							<?php /* The thumbnail */ ?>
 							<?php if ( $display_image ) {
 								if ( has_post_thumbnail() ) { ?>
-									<a class="pis-thumbnail-link" href="<?php the_permalink(); ?>" title="<?php esc_attr_e( sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
+									<a class="pis-thumbnail-link" href="<?php the_permalink(); ?>" title="<?php echo esc_attr( $title_link ); ?>" rel="bookmark">
 										<?php the_post_thumbnail(
 											$image_size,
 											array( 'class' => 'pis-thumbnail-img' )
-										); ?>
-									</a>
+										); ?></a>
 								<?php } // Close The thumbnail
 							} ?>
 
@@ -182,7 +188,7 @@ function pis_posts_in_sidebar( $args ) {
 									if ( $exc_arrow ) $the_arrow = '<span class="pis-arrow">&rarr;</span>'; ?>
 									<span class="pis-more">
 										<a href="<?php echo the_permalink(); ?>" title="<?php esc_attr_e( 'Read the full post', 'pis' ); ?>" rel="bookmark">
-											<?php echo $the_more . ' ' . $the_arrow; ?>
+											<?php echo $the_more . '&nbsp;' . $the_arrow; ?>
 										</a>
 									</span>
 								<?php }
@@ -200,14 +206,14 @@ function pis_posts_in_sidebar( $args ) {
 						<?php /* The author */ ?>
 						<?php if ( $display_author ) { ?>
 							<span class="pis-author">
-								<?php if ( $linkify_author ) { ?>
+								<?php if ( $author_text ) echo $author_text . '&nbsp;'; ?><?php
+								if ( $linkify_author ) { ?>
 									<?php
 									$author_title = sprintf( __( 'View all posts by %s', 'pis' ), get_the_author() );
 									$author_link  = get_author_posts_url( get_the_author_meta( 'ID' ) );
 									?>
-									<a class="pis-author-link" href="<?php echo $author_link; ?>" title="<?php echo esc_attr( $author_title ); ?>" rel="bookmark">
-										<?php echo get_the_author(); ?>
-									</a>
+									<a class="pis-author-link" href="<?php echo $author_link; ?>" title="<?php echo esc_attr( $author_title ); ?>" rel="author">
+										<?php echo get_the_author(); ?></a>
 								<?php } else {
 									echo get_the_author();
 								} ?>
@@ -217,14 +223,14 @@ function pis_posts_in_sidebar( $args ) {
 						<?php /* The date */ ?>
 						<?php if ( $display_date ) { ?>
 							<?php if ( $display_author ) { ?>
-								<span class="pis-separator"> - </span>
+								<span class="pis-separator">&nbsp;<?php echo $utility_sep; ?>&nbsp;</span>
 							<?php } ?>
 							<span class="pis-date">
-								<?php if ( $linkify_date ) { ?>
+								<?php if ( $date_text ) echo $date_text . '&nbsp;'; ?><?php
+								if ( $linkify_date ) { ?>
 									<?php $date_title = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) ); ?>
 									<a class="pis-date-link" href="<?php the_permalink(); ?>" title="<?php echo esc_attr( $date_title ); ?>" rel="bookmark">
-										<?php echo get_the_date(); ?>
-									</a>
+										<?php echo get_the_date(); ?></a>
 								<?php } else {
 									echo get_the_date();
 								} ?>
@@ -252,10 +258,11 @@ function pis_posts_in_sidebar( $args ) {
 						<?php /* The comments */ ?>
 						<?php if ( $comments ) { ?>
 							<?php if ( $display_author || $display_date ) { ?>
-								<span class="pis-separator"> - </span>
+								<span class="pis-separator">&nbsp;<?php echo $utility_sep; ?>&nbsp;</span>
 							<?php } ?>
 							<span class="pis-comments">
-								<?php comments_popup_link( '<span class="pis-reply">' . __( 'Leave a comment', 'pis' ) . '</span>', __( '1 Comment', 'pis' ), __( '% Comments', 'pis' ) ); ?>
+								<?php if ( $comments_text ) echo $comments_text . '&nbsp;'; ?><?php
+								comments_popup_link( '<span class="pis-reply">' . __( 'Leave a comment', 'pis' ) . '</span>', __( '1 Comment', 'pis' ), __( '% Comments', 'pis' ) ); ?>
 							</span>
 						<?php } ?>
 
@@ -268,8 +275,7 @@ function pis_posts_in_sidebar( $args ) {
 						$list_of_categories = get_the_category_list( $categ_sep . ' ', '', $linked_posts->post->ID );
 						if ( $list_of_categories ) { ?>
 							<p class="pis-categories-links">
-								<?php if ( $categ_text ) $categ_text_out = $categ_text . '&nbsp;'; ?>
-								<?php echo $categ_text_out; ?><?php echo $list_of_categories; ?>
+								<?php if ( $categ_text ) echo $categ_text . '&nbsp;'; ?><?php echo $list_of_categories; ?>
 							</p>
 						<?php }
 					} ?>
@@ -279,8 +285,7 @@ function pis_posts_in_sidebar( $args ) {
 						$list_of_tags = get_the_term_list( $linked_posts->post->ID, 'post_tag', $hashtag, $tag_sep . ' ' . $hashtag, '' );
 						if ( $list_of_tags ) { ?>
 							<p class="pis-tags-links">
-								<?php if ( $tags_text ) $tags_text_out = $tags_text . '&nbsp;'; ?>
-								<?php echo $tags_text_out; ?><?php echo $list_of_tags; ?>
+								<?php if ( $tags_text ) echo $tags_text . '&nbsp;'; ?><?php echo $list_of_tags; ?>
 							</p>
 						<?php }
 					} ?>
@@ -292,7 +297,15 @@ function pis_posts_in_sidebar( $args ) {
 			<?php /* The link to the entire archive */ ?>
 			<?php if ( $archive_link ) {
 
-				if ( $link_to == 'category' && isset( $cat ) ) {
+				$wp_post_type = array( 'post', 'page', 'media', 'any' );
+
+				if ( $link_to == 'author' && isset( $author ) ) {
+					$author_infos = get_user_by( 'slug', $author );
+					if ( $author_infos ) {
+						$term_link = get_author_posts_url( $author_infos->ID, $author );
+						$title_text = sprintf( __( 'Display all posts by %s', 'pis' ), $author_infos->display_name );
+					}
+				} elseif ( $link_to == 'category' && isset( $cat ) ) {
 					$term_identity = get_term_by( 'slug', $cat, 'category' );
 					if ( $term_identity ) {
 						$term_link = get_category_link( $term_identity->term_id );
@@ -304,20 +317,23 @@ function pis_posts_in_sidebar( $args ) {
 						$term_link = get_tag_link( $term_identity->term_id );
 						$title_text = sprintf( __( 'Display all posts archived as %s', 'pis' ), $term_identity->name );
 					}
-				} elseif ( $link_to == 'author' && isset( $author ) ) {
-					$author_infos = get_user_by( 'slug', $author );
-					if ( $author_infos ) {
-						$term_link = get_author_posts_url( $author_infos->ID, $author );
-						$title_text = sprintf( __( 'Display all posts by %s', 'pis' ), $author_infos->display_name );
-					}
-				} ?>
+				} elseif ( ! in_array( $post_type, $wp_post_type ) ) {
+					$term_link = get_post_type_archive_link( $link_to );
+					$post_type_object = get_post_type_object( $link_to );
+					$title_text = sprintf( __( 'Display all posts archived as %s', 'pis' ), $post_type_object->labels->name );
+				} elseif ( term_exists( $link_to, 'post_format' ) && $link_to == $post_format ) {
+					$term_link = get_post_format_link( substr( $link_to, 12 ) );
+					$term_object = get_term_by( 'slug', $link_to, 'post_format' );
+					$title_text = sprintf( __( 'Display all posts with post format %s', 'pis' ), $term_object->name );
+				}
 
-				<?php if ( $archive_text == '' )
-					$archive_text = __( 'More posts &rarr;', 'pis' ); ?>
+				if ( $archive_text == '' ) {
+					$archive_text = __( 'More posts &rarr;', 'pis' );
+				}
 
-				<?php if ( isset( $term_link ) ) { ?>
+				if ( isset( $term_link ) ) { ?>
 					<p class="archive-link">
-						<a href="<?php echo $term_link; ?>" title="<?php esc_attr_e( $title_text ); ?>" rel="bookmark">
+						<a href="<?php echo $term_link; ?>" title="<?php echo esc_attr( $title_text ); ?>" rel="bookmark">
 							<?php echo $archive_text; ?>
 						</a>
 					</p>
