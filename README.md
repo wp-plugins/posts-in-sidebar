@@ -4,7 +4,7 @@
 **Tags:** post, sidebar, widget  
 **Requires at least:** 3.3  
 **Tested up to:** 3.6  
-**Stable tag:** 1.8  
+**Stable tag:** 1.9  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -12,7 +12,29 @@ Adds a widget to display a list of posts in sidebar. The list can be created usi
 
 ## Description ##
 
-This plugin creates a new widget for your sidebar. In this widget you can display a list of post from a given author and/or category and/or tag. You can also display the featured image, the tags and also a link to the archive page. A bunch of useful options are also available.
+This plugin creates a new widget for your sidebar. In this widget you can display a list of post using author, category, tag, post format, custom post type, and so on. You can also display the featured image, the tags and also a link to the archive page. A bunch of useful options are also available.
+
+### Documentation, Help & Bugs ###
+
+The plugin's documentation is hosted on [GitHub](https://github.com/aldolat/posts-in-sidebar/wiki). Please refer to it before asking for support.
+
+If you need help, please use [WordPress forum](http://wordpress.org/support/plugin/posts-in-sidebar). Do not send private email unless it is really necessary.
+
+If you have found a bug, please report it on [GitHub](https://github.com/aldolat/posts-in-sidebar/issues).
+
+This plugin is developed using [GitHub](https://github.com/aldolat/posts-in-sidebar). If you wrote an enhancement and would share it with the world, please send me a [Pull request](https://github.com/aldolat/posts-in-sidebar/pulls).
+
+### Credits ###
+
+I would like to say *Thank You* to all the people who helped me in making this plugin better, and in particular (in chronological order, from older to newer):
+
+* [Jeff](http://profiles.wordpress.org/specialk/) for helping me in revisioning this plugin;
+* [sjmsing](http://wordpress.org/support/profile/sjmsing) for a feature request;
+* AlirezaJamali for the Persian translation;
+* [Mike Churcher](http://wordpress.org/support/profile/mike-churcher) for a couple of feature requests;
+* [lleroy](http://wordpress.org/support/profile/lleroy) for a feature request;
+* Thérèse Lachance for the first French translation;
+* [cilya](http://wordpress.org/support/profile/cilya) for the revised French translation.
 
 ## Installation ##
 
@@ -41,16 +63,34 @@ You have to edit your `functions.php` file. [Ask in the forum](http://wordpress.
 ## Screenshots ##
 
 ### 1. The widget panel ###
-![1. The widget panel](http://s.wordpress.org/extend/plugins/posts-in-sidebar/screenshot-1.png)
+![1. The widget panel](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-1.png)
 
-### 2. Three widgets in action. *Top widget*: a single post with all the informations. *Middle widget*: a single post with few informations. *Bottom widget*: a single post displayed only with the featured image. ###
-![2. Three widgets in action. *Top widget*: a single post with all the informations. *Middle widget*: a single post with few informations. *Bottom widget*: a single post displayed only with the featured image.](http://s.wordpress.org/extend/plugins/posts-in-sidebar/screenshot-2.png)
+### 2. A simple output of the widget: title, excerpt and link to the entire archive. ###
+![2. A simple output of the widget: title, excerpt and link to the entire archive.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-2.png)
 
-### 3. The widget displays three posts from a particular category. At the bottom you can view the link to the taxonomy which we retrieved the posts from. ###
-![3. The widget displays three posts from a particular category. At the bottom you can view the link to the taxonomy which we retrieved the posts from.](http://s.wordpress.org/extend/plugins/posts-in-sidebar/screenshot-3.png)
+### 3. Displaying the featured image, floating left. ###
+![3. Displaying the featured image, floating left.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-3.png)
+
+### 4. The same image as before, but in larger size. ###
+![4. The same image as before, but in larger size.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-4.png)
+
+### 5. The introductory text for the widget. ###
+![5. The introductory text for the widget.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-5.png)
+
+### 6. Displaying the full set of items (categories, date, author, tags, and so on). ###
+![6. Displaying the full set of items (categories, date, author, tags, and so on).](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-6.png)
 
 
 ## Changelog ##
+
+### 1.9 ###
+
+* NEW: The space after each line can be defined via widget interface.
+* NEW: The featured image can be aligned with text.
+* NEW: Added `apply_filters` where needed.
+* FIX: HTML structure for the archive link is now W3C valid, thanks to [cilya](http://wordpress.org/support/profile/cilya) for reporting it.
+* Updated French translation, thanks to [cilya](http://wordpress.org/support/profile/cilya).
+* Minor bug fixings.
 
 ### 1.8 ###
 
@@ -133,7 +173,3 @@ No notice to display.
 ### 1.0 ###
 
 No notice to display.
-
-## Credits ##
-
-I would like to say *Thank You* to all the people who helped me, in particular [Jeff](http://profiles.wordpress.org/specialk/ "Jeff's profile page") for helping me in revisioning this plugin.
