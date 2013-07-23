@@ -4,7 +4,7 @@ Donate link: http://dev.aldolat.it/projects/posts-in-sidebar/
 Tags: post, sidebar, widget
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.9
+Stable tag: 1.10
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -35,6 +35,7 @@ I would like to say *Thank You* to all the people who helped me in making this p
 * [lleroy](http://wordpress.org/support/profile/lleroy) for a feature request;
 * Thérèse Lachance for the first French translation;
 * [cilya](http://wordpress.org/support/profile/cilya) for the revised French translation.
+* Ahrale for the Hebrew translation.
 
 == Installation ==
 
@@ -70,6 +71,13 @@ You have to edit your `functions.php` file. [Ask in the forum](http://wordpress.
 6. Displaying the full set of items (categories, date, author, tags, and so on).
 
 == Changelog ==
+
+= 1.10 =
+
+* FIX: If the post is password protected, now the post password form is displayed before showing the post.
+* NEW: Now the user-defined excerpt can display a paragraph break, if any.
+* NEW: Added Hebrew translation, thanks to Ahrale.
+* Other minor changes.
 
 = 1.9 =
 
@@ -145,6 +153,10 @@ You have to edit your `functions.php` file. [Ask in the forum](http://wordpress.
 * First release of the plugin.
 
 == Upgrade Notice ==
+
+= 1.10 =
+
+Bugfix for password-protected posts.
 
 = 1.2 =
 
