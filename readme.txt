@@ -4,7 +4,7 @@ Donate link: http://dev.aldolat.it/projects/posts-in-sidebar/
 Tags: post, sidebar, widget
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.11
+Stable tag: 1.12
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,8 +34,9 @@ I would like to say *Thank You* to all the people who helped me in making this p
 * [Mike Churcher](http://wordpress.org/support/profile/mike-churcher) for a couple of feature requests;
 * [lleroy](http://wordpress.org/support/profile/lleroy) for a feature request;
 * Thérèse Lachance for the first French translation;
-* [cilya](http://wordpress.org/support/profile/cilya) for the revised French translation.
-* Ahrale for the Hebrew translation.
+* [cilya](http://wordpress.org/support/profile/cilya) for the revised French translation;
+* Ahrale for the Hebrew translation;
+* [Irma](http://wordpress.org/support/profile/studiozubli) for a feature request.
 
 == Installation ==
 
@@ -71,6 +72,13 @@ You have to edit your `functions.php` file. [Ask in the forum](http://wordpress.
 6. Displaying the full set of items (categories, date, author, tags, and so on).
 
 == Changelog ==
+
+= 1.12 =
+
+* NEW: added option for rich content.
+* NEW: added option for displaying the custom fields value/key of the post.
+* NEW: added option for removing bullets and extra left space for the list elements.
+* Code improvements.
 
 = 1.11 =
 
