@@ -110,6 +110,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'margin_unit'         => $instance['margin_unit'],
 			'intro_margin'        => $instance['intro_margin'],
 			'title_margin'        => $instance['title_margin'],
+			'side_image_margin'   => $instance['side_image_margin'],
+			'bottom_image_margin' => $instance['bottom_image_margin'],
 			'excerpt_margin'      => $instance['excerpt_margin'],
 			'utility_margin'      => $instance['utility_margin'],
 			'categories_margin'   => $instance['categories_margin'],
@@ -117,6 +119,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'custom_field_margin' => $instance['custom_field_margin'],
 			'archive_margin'      => $instance['archive_margin'],
 			'noposts_margin'      => $instance['noposts_margin'],
+			'custom_styles'       => $instance['custom_styles'],
 		));
 		echo $after_widget;
 	}
@@ -193,6 +196,10 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			if ( ! is_numeric( $new_instance['intro_margin'] ) ) $instance['intro_margin'] = NULL;
 		$instance['title_margin']      = strip_tags( $new_instance['title_margin'] );
 			if ( ! is_numeric( $new_instance['title_margin'] ) ) $instance['title_margin'] = NULL;
+		$instance['side_image_margin'] = $new_instance['side_image_margin'];
+			if ( ! is_numeric( $new_instance['side_image_margin'] ) ) $instance['side_image_margin'] = NULL;
+		$instance['bottom_image_margin'] = $new_instance['bottom_image_margin'];
+			if ( ! is_numeric( $new_instance['bottom_image_margin'] ) ) $instance['bottom_image_margin'] = NULL;
 		$instance['excerpt_margin']    = strip_tags( $new_instance['excerpt_margin'] );
 			if ( ! is_numeric( $new_instance['excerpt_margin'] ) ) $instance['excerpt_margin'] = NULL;
 		$instance['utility_margin']    = strip_tags( $new_instance['utility_margin'] );
@@ -207,6 +214,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			if ( ! is_numeric( $new_instance['archive_margin'] ) ) $instance['archive_margin'] = NULL;
 		$instance['noposts_margin']    = strip_tags( $new_instance['noposts_margin'] );
 			if ( ! is_numeric( $new_instance['noposts_margin'] ) ) $instance['noposts_margin'] = NULL;
+		$instance['custom_styles']    = strip_tags( $new_instance['custom_styles'] );
 		return $instance;
 	}
 
@@ -236,6 +244,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'display_image'       => false,
 			'image_size'          => 'thumbnail',
 			'image_align'         => 'no_change',
+			'side_image_margin'   => NULL,
+			'bottom_image_margin' => NULL,
 			'excerpt'             => 'excerpt',
 			'exc_length'          => 20,
 			'the_more'            => __( 'Read more&hellip;', 'pis' ),
@@ -263,7 +273,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'custom_field_sep'    => ':',
 			'archive_link'        => false,
 			'link_to'             => 'category',
-			'archive_text'        => '',
+			'archive_text'        => __( 'Display all posts', 'pis' ),
 			'nopost_text'         => __( 'No posts yet.', 'pis' ),
 			'remove_bullets'      => false,
 			'margin_unit'         => 'px',
@@ -276,6 +286,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'custom_field_margin' => NULL,
 			'archive_margin'      => NULL,
 			'noposts_margin'      => NULL,
+			'custom_styles'       => '',
 		);
 		$instance         = wp_parse_args( (array) $instance, $defaults );
 		$ignore_sticky    = (bool) $instance['ignore_sticky'];
@@ -310,8 +321,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_name('intro'),
 				$instance['intro'],
 				$style = 'resize: vertical; width: 100%; height: 80px;',
-				$comment = sprintf( __( 'Allowed HTML: %s. Other tags will be stripped.', 'pis' ), '<code>a</code>, <code>strong</code>, <code>em</code>' ) );
-			?>
+				$comment = sprintf( __( 'Allowed HTML: %s. Other tags will be stripped.', 'pis' ), '<code>a</code>, <code>strong</code>, <code>em</code>' )
+			); ?>
 
 			<hr />
 
@@ -459,6 +470,16 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 					'name'  => 'modified',
 					'value' => 'modified',
 					'desc'  => __( 'Modified', 'pis' )
+				),
+				'menu_order' => array(
+					'name'  => 'menu_order',
+					'value' => 'menu_order',
+					'desc'  => __( 'Menu order', 'pis' )
+				),
+				'comment_count' => array(
+					'name'  => 'comment_count',
+					'value' => 'comment_count',
+					'desc'  => __( 'Comment count', 'pis' )
 				),
 				'rand' => array(
 					'name'  => 'rand',
@@ -739,7 +760,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			$options = array();
 			$metas = (array) pis_meta();
 			foreach ( $metas as $meta ) {
-				if ( ! is_protected_meta( $key, 'post' ) ) {
+				if ( ! is_protected_meta( $meta, 'post' ) ) {
 					$options[] = array(
 						'name'  => $meta,
 						'value' => $meta,
@@ -804,7 +825,13 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 			<h4><?php _e( 'Extras', 'pis' ); ?></h4>
 
-			<?php pis_form_checkbox( __( 'Try to remove the bullets and the extra left space from the list elements', 'pis' ), $this->get_field_id( 'remove_bullets' ), $this->get_field_name( 'remove_bullets' ), checked( $remove_bullets, true, false ), __( 'If the plugin doesn\'t remove the bullets and/or the extra left space, you have to edit your CSS file manually.', 'pis' ) ); ?>
+			<?php pis_form_checkbox(
+				__( 'Try to remove the bullets and the extra left space from the list elements', 'pis' ),
+				$this->get_field_id( 'remove_bullets' ),
+				$this->get_field_name( 'remove_bullets' ),
+				checked( $remove_bullets, true, false ),
+				sprintf( __( 'If the plugin doesn\'t remove the bullets and/or the extra left space, you have to %1$sedit your CSS file%2$s manually.', 'pis' ), '<a href="' . admin_url( 'theme-editor.php' ) . '" target="_blank">', '</a>' )
+			); ?>
 
 		</div>
 
@@ -812,9 +839,9 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 		<hr />
 
-		<h4><?php _e( 'Paragraph bottom margins', 'pis' ); ?></h4>
+		<h4><?php _e( 'Elements margins', 'pis' ); ?></h4>
 
-		<p><em><?php printf( __( 'This section defines the %1$sbottom margin%2$s for each paragraph of the widget. Leave blank if you don\'t want to add any local style.', 'pis' ), '<strong>', '</strong>' ); ?></em></p>
+		<p><em><?php _e( 'This section defines the margin for each line of the widget. Leave blank if you don\'t want to add any local style.', 'pis' ); ?></em></p>
 
 		<?php $options = array(
 			'px' => array(
@@ -852,12 +879,16 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 			<?php pis_form_input_text( __( 'Title margin', 'pis' ), $this->get_field_id( 'title_margin' ), $this->get_field_name( 'title_margin' ), esc_attr( $instance['title_margin'] ) ); ?>
 
-			<?php pis_form_input_text( __( 'Excerpt margin', 'pis' ), $this->get_field_id( 'excerpt_margin' ), $this->get_field_name( 'excerpt_margin' ), esc_attr( $instance['excerpt_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Left/Right image margin', 'pis' ), $this->get_field_id( 'side_image_margin' ), $this->get_field_name( 'side_image_margin' ), esc_attr( $instance['side_image_margin'] ) ); ?>
+
+			<?php pis_form_input_text( __( 'Bottom image margin', 'pis' ), $this->get_field_id( 'bottom_image_margin' ), $this->get_field_name( 'bottom_image_margin' ), esc_attr( $instance['bottom_image_margin'] ) ); ?>
 
 		</div>
 
 
 		<div style="float: left; width: 31%; margin-right: 2%">
+
+			<?php pis_form_input_text( __( 'Excerpt margin', 'pis' ), $this->get_field_id( 'excerpt_margin' ), $this->get_field_name( 'excerpt_margin' ), esc_attr( $instance['excerpt_margin'] ) ); ?>
 
 			<?php pis_form_input_text( __( 'Utility margin', 'pis' ), $this->get_field_id( 'utility_margin' ), $this->get_field_name( 'utility_margin' ), esc_attr( $instance['utility_margin'] ) ); ?>
 
@@ -877,6 +908,22 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			<?php pis_form_input_text( __( 'No-posts margin', 'pis' ), $this->get_field_id( 'noposts_margin' ), $this->get_field_name( 'noposts_margin' ), esc_attr( $instance['noposts_margin'] ) ); ?>
 
 		</div>
+
+		<div class="clear"></div>
+
+		<hr />
+
+		<h4><?php _e( 'Custom styles', 'pis' ); ?></h4>
+
+		<p><em><?php printf( __( 'In this field you can add your own styles, for example: %s', 'pis' ), '<code>.pis-excerpt { color: green; }</code>' ); ?></em></p>
+
+		<?php pis_form_textarea(
+			__( 'Custom styles', 'pis' ),
+			$this->get_field_id('custom_styles'),
+			$this->get_field_name('custom_styles'),
+			$instance['custom_styles'],
+			$style = 'resize: vertical; width: 100%; height: 80px;'
+		); ?>
 
 		<div class="clear"></div>
 
