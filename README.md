@@ -4,7 +4,7 @@
 **Tags:** post, sidebar, widget  
 **Requires at least:** 3.3  
 **Tested up to:** 3.6  
-**Stable tag:** 1.13  
+**Stable tag:** 1.14  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -28,16 +28,16 @@ This plugin is developed using [GitHub](https://github.com/aldolat/posts-in-side
 
 I would like to say *Thank You* to all the people who helped me in making this plugin better, and in particular (in chronological order, from older to newer):
 
-* [Jeff](http://profiles.wordpress.org/specialk/) for helping me in revisioning this plugin;
-* [sjmsing](http://wordpress.org/support/profile/sjmsing) for a feature request;
-* AlirezaJamali for the Persian translation;
-* [Mike Churcher](http://wordpress.org/support/profile/mike-churcher) for a couple of feature requests;
-* [lleroy](http://wordpress.org/support/profile/lleroy) for a feature request;
-* Thérèse Lachance for the first French translation;
-* [cilya](http://wordpress.org/support/profile/cilya) for the revised French translation;
-* Ahrale for the Hebrew translation;
-* [Irma](http://wordpress.org/support/profile/studiozubli) for a feature request.
-* [hypn0ticnet](http://wordpress.org/support/profile/hypn0ticnet) for a feature request.
+* [Jeff](http://profiles.wordpress.org/specialk/) for helping me in revisioning this plugin
+* [sjmsing](http://wordpress.org/support/profile/sjmsing) for a feature request
+* AlirezaJamali for the Persian translation
+* [Mike Churcher](http://wordpress.org/support/profile/mike-churcher) for a couple of feature requests
+* [lleroy](http://wordpress.org/support/profile/lleroy) for a feature request
+* Thérèse Lachance for the first French translation
+* [cilya](http://wordpress.org/support/profile/cilya) for the revised French translation
+* [Ahrale](http://atar4u.com) for the Hebrew translation
+* [Irma](http://wordpress.org/support/profile/studiozubli) for a feature request
+* [hypn0ticnet](http://wordpress.org/support/profile/hypn0ticnet) for a feature request
 
 ## Installation ##
 
@@ -85,6 +85,11 @@ You have to edit your `functions.php` file. [Ask in the forum](http://wordpress.
 
 
 ## Changelog ##
+
+### 1.14 ###
+
+* FIX: fetching posts from tags now works correctly.
+* Updated Hebrew translation, thanks to Ahrale.
 
 ### 1.13 ###
 
