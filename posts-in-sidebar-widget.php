@@ -49,11 +49,18 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$title = apply_filters( 'widget_title', $instance['title'] );
 
 		echo $before_widget;
+
+		// Add a new container if the "Container Class" is not empty
+		if ( $instance['container_class'] ) {
+			echo '<div class="' . $instance['container_class'] . '">';
+		}
+
 		if ( $title && $instance['title_link'] ) {
 			echo $before_title . '<a class="pis-title-link" href="' . $instance['title_link'] . '">' . $title . '</a>' . $after_title;
 		} else if ( $title ) {
 			echo $before_title . $title . $after_title;
 		}
+
 		pis_posts_in_sidebar( array(
 			'intro'               => $instance['intro'],
 			'post_type'           => $instance['post_type'],
@@ -122,7 +129,18 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'archive_margin'      => $instance['archive_margin'],
 			'noposts_margin'      => $instance['noposts_margin'],
 			'custom_styles'       => $instance['custom_styles'],
+			'cached'              => $instance['cached'],
+			'cache_time'          => $instance['cache_time'],
+			// The following 'widget_id' variable will be used in the main function
+			// to check if a cached version of the query already exists
+			// for every instance of the widget.
+			'widget_id'           => $this->id, // $this->id is the id of the widget instance.
 		));
+
+		if ( $instance['container_class'] ) {
+			echo '</div>';
+		}
+
 		echo $after_widget;
 	}
 
@@ -193,6 +211,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$instance['link_to']           = $new_instance['link_to'];
 		$instance['archive_text']      = strip_tags( $new_instance['archive_text'] );
 		$instance['nopost_text']       = strip_tags( $new_instance['nopost_text'] );
+		$instance['container_class']   = strip_tags( $new_instance['container_class'] );
 		$instance['list_element']      = $new_instance['list_element'];
 		$instance['remove_bullets']    = $new_instance['remove_bullets'];
 		$instance['margin_unit']       = $new_instance['margin_unit'];
@@ -218,7 +237,11 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			if ( ! is_numeric( $new_instance['archive_margin'] ) ) $instance['archive_margin'] = NULL;
 		$instance['noposts_margin']    = strip_tags( $new_instance['noposts_margin'] );
 			if ( ! is_numeric( $new_instance['noposts_margin'] ) ) $instance['noposts_margin'] = NULL;
-		$instance['custom_styles']    = strip_tags( $new_instance['custom_styles'] );
+		$instance['custom_styles']     = strip_tags( $new_instance['custom_styles'] );
+		$instance['cached']            = $new_instance['cached'];
+		$instance['cache_time']        = strip_tags( $new_instance['cache_time'] );
+			if ( ! is_numeric( $new_instance['cache_time'] ) || $new_instance['cache_time'] == 0 ) $instance['cache_time'] = 3600;
+		$instance['widget_id']         = $this->id; // This option is stored only for uninstall purposes. See uninstall.php for further information.
 		return $instance;
 	}
 
@@ -280,6 +303,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'link_to'             => 'category',
 			'archive_text'        => __( 'Display all posts', 'pis' ),
 			'nopost_text'         => __( 'No posts yet.', 'pis' ),
+			'container_class'     => '',
 			'list_element'        => 'ul',
 			'remove_bullets'      => false,
 			'margin_unit'         => 'px',
@@ -293,6 +317,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'archive_margin'      => NULL,
 			'noposts_margin'      => NULL,
 			'custom_styles'       => '',
+			'cached'              => false,
+			'cache_time'          => 3600,
 		);
 		$instance         = wp_parse_args( (array) $instance, $defaults );
 		$ignore_sticky    = (bool) $instance['ignore_sticky'];
@@ -312,6 +338,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$custom_field_key = (bool) $instance['custom_field_key'];
 		$archive_link     = (bool) $instance['archive_link'];
 		$remove_bullets   = (bool) $instance['remove_bullets'];
+		$cached           = (bool) $instance['cached'];
 		?>
 		<div style="float: left; width: 31%; margin-right: 2%;">
 
@@ -863,6 +890,14 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 			<h4><?php _e( 'Extras', 'pis' ); ?></h4>
 
+			<?php // ================= Container Class
+			pis_form_input_text(
+				__( 'Custom CSS Class for container', 'pis' ),
+				$this->get_field_id('container_class'),
+				$this->get_field_name('container_class'),
+				esc_attr( $instance['container_class'] )
+			); ?>
+
 			<?php // ================= Type of HTML for list of posts
 			$options = array(
 				'ul' => array(
@@ -889,6 +924,23 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_name( 'remove_bullets' ),
 				checked( $remove_bullets, true, false ),
 				sprintf( __( 'If the plugin doesn\'t remove the bullets and/or the extra left space, you have to %1$sedit your CSS file%2$s manually.', 'pis' ), '<a href="' . admin_url( 'theme-editor.php' ) . '" target="_blank">', '</a>' )
+			); ?>
+
+			<?php // ================= Cache for the query
+			pis_form_checkbox( __( 'Use a cache to serve the output (in seconds)', 'pis' ),
+				$this->get_field_id( 'cached' ),
+				$this->get_field_name( 'cached' ),
+				checked( $cached, true, false ),
+				__( 'This option, if activated, will increase the performance.', 'pis' )
+			); ?>
+
+			<?php // ================= Cache duration
+			pis_form_input_text(
+				__( 'How much should last the cache?', 'pis' ),
+				$this->get_field_id('cache_time'),
+				$this->get_field_name('cache_time'),
+				esc_attr( $instance['cache_time'] ),
+				sprintf( __( 'E.g., %s for one hour of cache.', 'pis' ), '<code>3600</code>' )
 			); ?>
 
 		</div>
