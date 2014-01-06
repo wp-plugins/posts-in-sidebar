@@ -51,37 +51,27 @@ This section describes how to install the plugin and get it working.
 
 ## Frequently Asked Questions ##
 
-### May I retrieve posts using category and tag? ###
-
-Yes. you can retrieve posts using author archive and/or category archive and/or tag archive.
-
-### How can I float my images? ###
-
-You have to edit your CSS file (usually `style.css`). You can target the image adding a new style like this at the end of your CSS file: `.pis-excerpt img { float: left; margin-right: 10px; }`
-
-### How can I add new size for my images? ###
-
-You have to edit your `functions.php` file. [Ask in the forum](http://wordpress.org/support/plugin/posts-in-sidebar) of this plugin, for more informations. Or you can use [a plugin](http://wordpress.org/plugins/simple-image-sizes/) that can do that for you.
+Please, see [FAQ page](https://github.com/aldolat/posts-in-sidebar/wiki/FAQ) on GitHub.
 
 ## Screenshots ##
 
-### 1. The widget panel ###
-![1. The widget panel](https://github.com/aldolat/posts-in-sidebar/wiki/images/widget-panel.png)
+###1. The widget panel###
+![The widget panel](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-1.png)
 
-### 2. A simple output of the widget: title, excerpt and link to the entire archive. ###
-![2. A simple output of the widget: title, excerpt and link to the entire archive.](https://github.com/aldolat/posts-in-sidebar/wiki/images/screenshot-2.png)
+###2. A simple output of the widget: title, excerpt and link to the entire archive.###
+![A simple output of the widget: title, excerpt and link to the entire archive.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-2.png)
 
-### 3. Displaying the featured image, floating left. ###
-![3. Displaying the featured image, floating left.](https://github.com/aldolat/posts-in-sidebar/wiki/images/screenshot-3.png)
+###3. Displaying the featured image, floating left.###
+![Displaying the featured image, floating left.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-3.png)
 
-### 4. The same image as before, but in larger size. ###
-![4. The same image as before, but in larger size.](https://github.com/aldolat/posts-in-sidebar/wiki/images/screenshot-4.png)
+###4. The same image as before, but in larger size.###
+![The same image as before, but in larger size.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-4.png)
 
-### 5. The introductory text for the widget. ###
-![5. The introductory text for the widget.](https://github.com/aldolat/posts-in-sidebar/wiki/images/screenshot-5.png)
+###5. The introductory text for the widget.###
+![The introductory text for the widget.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-5.png)
 
-### 6. Displaying the full set of items (categories, date, author, tags, and so on). ###
-![6. Displaying the full set of items (categories, date, author, tags, and so on).](https://github.com/aldolat/posts-in-sidebar/wiki/images/screenshot-6.png)
+###6. Displaying the full set of items (categories, date, author, tags, and so on).###
+![Displaying the full set of items (categories, date, author, tags, and so on).](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-6.png)
 
 
 ## Changelog ##
