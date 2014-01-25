@@ -2,9 +2,9 @@
 **Contributors:** aldolat  
 **Donate link:** http://dev.aldolat.it/projects/posts-in-sidebar/  
 **Tags:** post, sidebar, widget  
-**Requires at least:** 3.3  
+**Requires at least:** 3.5  
 **Tested up to:** 3.8  
-**Stable tag:** 1.16.1  
+**Stable tag:** 1.17  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -55,26 +55,37 @@ Please, see [FAQ page](https://github.com/aldolat/posts-in-sidebar/wiki/FAQ) on 
 
 ## Screenshots ##
 
-###1. The widget panel###
+### 1. The widget panel ###
 ![The widget panel](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-1.png)
 
-###2. A simple output of the widget: title, excerpt and link to the entire archive.###
+### 2. A simple output of the widget: title, excerpt and link to the entire archive. ###
 ![A simple output of the widget: title, excerpt and link to the entire archive.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-2.png)
 
-###3. Displaying the featured image, floating left.###
+### 3. Displaying the featured image, floating left. ###
 ![Displaying the featured image, floating left.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-3.png)
 
-###4. The same image as before, but in larger size.###
+### 4. The same image as before, but in larger size. ###
 ![The same image as before, but in larger size.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-4.png)
 
-###5. The introductory text for the widget.###
+### 5. The introductory text for the widget. ###
 ![The introductory text for the widget.](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-5.png)
 
-###6. Displaying the full set of items (categories, date, author, tags, and so on).###
+### 6. Displaying the full set of items (categories, date, author, tags, and so on). ###
 ![Displaying the full set of items (categories, date, author, tags, and so on).](http://s-plugins.wordpress.org/posts-in-sidebar/assets/screenshot-6.png)
 
 
 ## Changelog ##
+
+### 1.17 ###
+
+* NEW: Added option to exclude posts with certain IDs.
+* NEW: Added option to display image before post title.
+* NEW: Completed options for Order by parameter.
+* Now the plugin requires at least WordPress 3.5.
+* Code optimization.
+* The class for the custom container class is now sanitized.
+* The custom container receives now only a single CSS class.
+* Completed the PhpDocumentor tags.
 
 ### 1.16.1 ###
 
@@ -207,6 +218,10 @@ Please, see [FAQ page](https://github.com/aldolat/posts-in-sidebar/wiki/FAQ) on 
 * First release of the plugin.
 
 ## Upgrade Notice ##
+
+### 1.17 ###
+
+This version requires WordPress 3.5 (for "post__in" option in "Order by" field).
 
 ### 1.10 ###
 
