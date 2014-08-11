@@ -5,7 +5,7 @@
  * Plugin URI: http://dev.aldolat.it/projects/posts-in-sidebar/
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
- * Version: 1.20
+ * Version: 1.21
  * License: GPLv3 or later
  * Text Domain: pis
  * Domain Path: /languages/
@@ -26,7 +26,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @package PostsInSidebar
- * @version 1.20
+ * @version 1.21
  * @author Aldo Latino <aldolat@gmail.com>
  * @copyright Copyright (c) 2009 - 2014, Aldo Latino
  * @link http://dev.aldolat.it/projects/posts-in-sidebar/
@@ -36,7 +36,7 @@
 /**
  * Define the version of the plugin.
  */
-define( 'PIS_VERSION', '1.20' );
+define( 'PIS_VERSION', '1.21' );
 
 /**
  * The core function.
@@ -56,6 +56,7 @@ function pis_posts_in_sidebar( $args ) {
 		'number'              => get_option( 'posts_per_page' ),
 		'orderby'             => 'date',
 		'order'               => 'DESC',
+		'exclude_current_post'=> false,
 		'post_not_in'         => '',
 		'cat_not_in'          => '',        // Category ID, comma separated
 		'tag_not_in'          => '',        // Tag ID, comma separated
@@ -131,6 +132,10 @@ function pis_posts_in_sidebar( $args ) {
 	if ( $cat_not_in  && ! is_array( $cat_not_in ) )  $cat_not_in  = explode( ',', $cat_not_in );  else $cat_not_in  = NULL;
 	if ( $tag_not_in  && ! is_array( $tag_not_in ) )  $tag_not_in  = explode( ',', $tag_not_in );  else $tag_not_in  = NULL;
 
+	if ( ( is_single() || is_page() ) && $exclude_current_post ) {
+		$post_not_in[] = get_the_id();
+	}
+
 	// Build the array to get posts
 	$params = array(
 		'post_type'           => $post_type,
@@ -152,13 +157,13 @@ function pis_posts_in_sidebar( $args ) {
 		'ignore_sticky_posts' => $ignore_sticky
 	);
 
-	// If the user has choosen a cached version of the widget output...
+	// If the user has chosen a cached version of the widget output...
 	if ( $cached ) {
 
 		// Get the cached query
 		$pis_query = get_transient( $widget_id . '_query_cache' );
 
-		// If it does not exists, create a new query and cache it for future uses
+		// If it does not exist, create a new query and cache it for future uses
 		if ( ! $pis_query ) {
 			$pis_query = new WP_Query( $params );
 			set_transient( $widget_id . '_query_cache', $pis_query, $cache_time );
