@@ -47,6 +47,14 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 	function widget( $args, $instance ) {
 		extract( $args );
 
+		/**
+		 * If the user doesn't enter any text in noposts field, the widget won't be displayed.
+		 * 
+		 * @since 1.23
+		 */
+		if ( ! $instance['nopost_text'] )
+			return;
+
 		$title = apply_filters( 'widget_title', $instance['title'] );
 
 		echo $before_widget;
@@ -63,7 +71,10 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		}
 
 		pis_posts_in_sidebar( array(
+			// The title of the widget
 			'intro'               => $instance['intro'],
+
+			// Posts retrieving
 			'post_type'           => $instance['post_type'],
 			'posts_id'            => $instance['posts_id'],
 			'author'              => $instance['author'],
@@ -73,27 +84,36 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'number'              => $instance['number'],
 			'orderby'             => $instance['orderby'],
 			'order'               => $instance['order'],
-			'exclude_current_post'=> $instance['exclude_current_post'],
-			'post_not_in'         => $instance['post_not_in'],
-			'cat_not_in'          => $instance['cat_not_in'],
-			'tag_not_in'          => $instance['tag_not_in'],
 			'offset_number'       => $instance['offset_number'],
 			'post_status'         => $instance['post_status'],
 			'post_meta_key'       => $instance['post_meta_key'],
 			'post_meta_val'       => $instance['post_meta_val'],
 			'ignore_sticky'       => $instance['ignore_sticky'],
+
+			// Posts exclusion
+			'exclude_current_post'=> $instance['exclude_current_post'],
+			'post_not_in'         => $instance['post_not_in'],
+			'cat_not_in'          => $instance['cat_not_in'],
+			'tag_not_in'          => $instance['tag_not_in'],
+
+			// The title of the post
 			'display_title'       => $instance['display_title'],
 			'link_on_title'       => $instance['link_on_title'],
+			'arrow'               => $instance['arrow'],
+
+			// The featured image of the post
 			'display_image'       => $instance['display_image'],
 			'image_size'          => $instance['image_size'],
 			'image_align'         => $instance['image_align'],
 			'image_before_title'  => $instance['image_before_title'],
+
+			// The text of the post
 			'excerpt'             => $instance['excerpt'],
-			'arrow'               => $instance['arrow'],
 			'exc_length'          => $instance['exc_length'],
 			'the_more'            => $instance['the_more'],
 			'exc_arrow'           => $instance['exc_arrow'],
-			'utility_after_title' => $instance['utility_after_title'],
+
+			// Author, date and comments
 			'display_author'      => $instance['display_author'],
 			'author_text'         => $instance['author_text'],
 			'linkify_author'      => $instance['linkify_author'],
@@ -103,24 +123,50 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'comments'            => $instance['comments'],
 			'comments_text'       => $instance['comments_text'],
 			'utility_sep'         => $instance['utility_sep'],
+			'utility_after_title' => $instance['utility_after_title'],
+
+			// The categories of the post
 			'categories'          => $instance['categories'],
 			'categ_text'          => $instance['categ_text'],
 			'categ_sep'           => $instance['categ_sep'],
+
+			// The tags of the post
 			'tags'                => $instance['tags'],
 			'tags_text'           => $instance['tags_text'],
 			'hashtag'             => $instance['hashtag'],
 			'tag_sep'             => $instance['tag_sep'],
+
+			// The custom field
 			'custom_field'        => $instance['custom_field'],
 			'custom_field_txt'    => $instance['custom_field_txt'],
 			'meta'                => $instance['meta'],
 			'custom_field_key'    => $instance['custom_field_key'],
 			'custom_field_sep'    => $instance['custom_field_sep'],
+
+			// The link to the archive
 			'archive_link'        => $instance['archive_link'],
 			'link_to'             => $instance['link_to'],
 			'archive_text'        => $instance['archive_text'],
+
+			// Text when no posts found
 			'nopost_text'         => $instance['nopost_text'],
+
+			// Extras
 			'list_element'        => $instance['list_element'],
 			'remove_bullets'      => $instance['remove_bullets'],
+
+
+			// Cache
+			'cached'              => $instance['cached'],
+			'cache_time'          => $instance['cache_time'],
+			/*
+				The following 'widget_id' variable will be used in the main function
+				to check if a cached version of the query already exists
+				for every instance of the widget.
+			*/
+			'widget_id'           => $this->id, // $this->id is the id of the widget instance.
+
+			// Elements margins
 			'margin_unit'         => $instance['margin_unit'],
 			'intro_margin'        => $instance['intro_margin'],
 			'title_margin'        => $instance['title_margin'],
@@ -134,12 +180,11 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'archive_margin'      => $instance['archive_margin'],
 			'noposts_margin'      => $instance['noposts_margin'],
 			'custom_styles'       => $instance['custom_styles'],
-			'cached'              => $instance['cached'],
-			'cache_time'          => $instance['cache_time'],
-			// The following 'widget_id' variable will be used in the main function
-			// to check if a cached version of the query already exists
-			// for every instance of the widget.
-			'widget_id'           => $this->id, // $this->id is the id of the widget instance.
+
+			// Debug
+			'debug_query'         => $instance['debug_query'],
+			'debug_params'        => $instance['debug_params'],
+			'debug_query_number'  => $instance['debug_query_number'],
 		));
 
 		if ( $instance['container_class'] ) {
@@ -151,6 +196,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
+
+		// The title of the widget
 		$instance['title']      = strip_tags( $new_instance['title'] );
 		$instance['title_link'] = esc_url( $new_instance['title_link'] );
 		$allowed_html = array(
@@ -162,6 +209,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'strong' => array(),
 		);
 		$instance['intro']               = wp_kses( $new_instance['intro'], $allowed_html );
+
+		// Posts retrieving
 		$instance['post_type']           = $new_instance['post_type'];
 		$instance['posts_id']            = strip_tags( $new_instance['posts_id'] );
 		$instance['author']              = $new_instance['author'];
@@ -172,29 +221,38 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			if( $instance['number'] == 0 || ! is_numeric( $instance['number'] ) ) $instance['number'] = get_option( 'posts_per_page' );
 		$instance['orderby']             = $new_instance['orderby'];
 		$instance['order']               = $new_instance['order'];
-		$instance['exclude_current_post']= $new_instance['exclude_current_post'];
-		$instance['post_not_in']         = strip_tags( $new_instance['post_not_in'] );
-		$instance['cat_not_in']          = strip_tags( $new_instance['cat_not_in'] );
-		$instance['tag_not_in']          = strip_tags( $new_instance['tag_not_in'] );
 		$instance['offset_number']       = absint( strip_tags( $new_instance['offset_number'] ) );
 			if( $instance['offset_number'] == 0 || ! is_numeric( $instance['offset_number'] ) ) $instance['offset_number'] = '';
 		$instance['post_status']         = $new_instance['post_status'];
 		$instance['post_meta_key']       = strip_tags( $new_instance['post_meta_key'] );
 		$instance['post_meta_val']       = strip_tags( $new_instance['post_meta_val'] );
 		$instance['ignore_sticky']       = $new_instance['ignore_sticky'];
+
+		// Posts exclusion
+		$instance['exclude_current_post']= $new_instance['exclude_current_post'];
+		$instance['post_not_in']         = strip_tags( $new_instance['post_not_in'] );
+		$instance['cat_not_in']          = strip_tags( $new_instance['cat_not_in'] );
+		$instance['tag_not_in']          = strip_tags( $new_instance['tag_not_in'] );
+
+		// The title of the post
 		$instance['display_title']       = $new_instance['display_title'];
 		$instance['link_on_title']       = $new_instance['link_on_title'];
 		$instance['arrow']               = $new_instance['arrow'];
+
+		// The featured image of the post
 		$instance['display_image']       = $new_instance['display_image'];
 		$instance['image_size']          = $new_instance['image_size'];
 		$instance['image_align']         = $new_instance['image_align'];
 		$instance['image_before_title']  = $new_instance['image_before_title'];
+
+		// The text of the post
 		$instance['excerpt']             = $new_instance['excerpt'];
 		$instance['exc_length']          = absint( strip_tags( $new_instance['exc_length'] ) );
 			if( $instance['exc_length'] == '' || ! is_numeric( $instance['exc_length'] ) ) $instance['exc_length'] = 20;
 		$instance['the_more']            = strip_tags( $new_instance['the_more'] );
 		$instance['exc_arrow']           = $new_instance['exc_arrow'];
-		$instance['utility_after_title'] = $new_instance['utility_after_title'];
+
+		// Author, date and comments
 		$instance['display_author']      = $new_instance['display_author'];
 		$instance['author_text']         = strip_tags( $new_instance['author_text'] );
 		$instance['linkify_author']      = $new_instance['linkify_author'];
@@ -204,25 +262,54 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$instance['comments']            = $new_instance['comments'];
 		$instance['comments_text']       = strip_tags( $new_instance['comments_text'] );
 		$instance['utility_sep']         = strip_tags( $new_instance['utility_sep'] );
+		$instance['utility_after_title'] = $new_instance['utility_after_title'];
+
+		// The categories of the post
 		$instance['categories']          = $new_instance['categories'];
 		$instance['categ_text']          = strip_tags( $new_instance['categ_text'] );
 		$instance['categ_sep']           = strip_tags( $new_instance['categ_sep'] );
+
+		// The tags of the post
 		$instance['tags']                = $new_instance['tags'];
 		$instance['tags_text']           = strip_tags( $new_instance['tags_text'] );
 		$instance['hashtag']             = strip_tags( $new_instance['hashtag'] );
 		$instance['tag_sep']             = strip_tags( $new_instance['tag_sep'] );
+
+		// The custom field
 		$instance['custom_field']        = $new_instance['custom_field'];
 		$instance['custom_field_txt']    = strip_tags( $new_instance['custom_field_txt'] );
 		$instance['meta']                = strip_tags( $new_instance['meta'] );
 		$instance['custom_field_key']    = $new_instance['custom_field_key'];
 		$instance['custom_field_sep']    = strip_tags( $new_instance['custom_field_sep'] );
+
+		// The link to the archive
 		$instance['archive_link']        = $new_instance['archive_link'];
 		$instance['link_to']             = $new_instance['link_to'];
 		$instance['archive_text']        = strip_tags( $new_instance['archive_text'] );
+
+		// Text when no posts found
 		$instance['nopost_text']         = strip_tags( $new_instance['nopost_text'] );
+
+		// Extras
 		$instance['container_class']     = sanitize_html_class( $new_instance['container_class'] );
 		$instance['list_element']        = $new_instance['list_element'];
 		$instance['remove_bullets']      = $new_instance['remove_bullets'];
+
+		// Cache
+		$instance['cached']              = $new_instance['cached'];
+		$instance['cache_time']          = strip_tags( $new_instance['cache_time'] );
+			// If cache time is not a numeric value OR is 0, then reset cache. Also set cache time to 3600 if cache is active.
+			if ( ! is_numeric( $new_instance['cache_time'] ) || $new_instance['cache_time'] == 0 ) {
+				delete_transient( $this->id . '_query_cache' );
+				if ( $instance['cached'] ) {
+					$instance['cache_time'] = 3600;
+				} else {
+					$instance['cache_time'] = '';
+				}
+			}
+		$instance['widget_id']           = $this->id; // This option is stored only for uninstall purposes. See uninstall.php for further information.
+
+		// Elements margins
 		$instance['margin_unit']         = $new_instance['margin_unit'];
 		$instance['intro_margin']        = strip_tags( $new_instance['intro_margin'] );
 			if ( ! is_numeric( $new_instance['intro_margin'] ) ) $instance['intro_margin'] = NULL;
@@ -247,26 +334,23 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$instance['noposts_margin']      = strip_tags( $new_instance['noposts_margin'] );
 			if ( ! is_numeric( $new_instance['noposts_margin'] ) ) $instance['noposts_margin'] = NULL;
 		$instance['custom_styles']       = strip_tags( $new_instance['custom_styles'] );
-		$instance['cached']              = $new_instance['cached'];
-		$instance['cache_time']          = strip_tags( $new_instance['cache_time'] );
-			// If cache time is not a numeric value OR is 0, then reset cache. Also set cache time to 3600 if cache is active.
-			if ( ! is_numeric( $new_instance['cache_time'] ) || $new_instance['cache_time'] == 0 ) {
-				delete_transient( $this->id . '_query_cache' );
-				if ( $instance['cached'] ) {
-					$instance['cache_time'] = 3600;
-				} else {
-					$instance['cache_time'] = '';
-				}
-			}
-		$instance['widget_id']           = $this->id; // This option is stored only for uninstall purposes. See uninstall.php for further information.
+
+		// Debug
+		$instance['debug_query']         = $new_instance['debug_query'];
+		$instance['debug_params']        = $new_instance['debug_params'];
+		$instance['debug_query_number']  = $new_instance['debug_query_number'];
+
 		return $instance;
 	}
 
 	function form( $instance ) {
 		$defaults = array(
+			// The title of the widget
 			'title'               => __( 'Posts', 'pis' ),
 			'title_link'          => '',
 			'intro'               => '',
+
+			// Posts retrieving
 			'post_type'           => 'post',
 			'posts_id'            => '',
 			'author'              => '',
@@ -276,29 +360,36 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'number'              => get_option( 'posts_per_page' ),
 			'orderby'             => 'date',
 			'order'               => 'DESC',
-			'exclude_current_post'=> false,
-			'post_not_in'         => '',
-			'cat_not_in'          => '',
-			'tag_not_in'          => '',
 			'offset_number'       => '',
 			'post_status'         => 'publish',
 			'post_meta_key'       => '',
 			'post_meta_val'       => '',
 			'ignore_sticky'       => false,
+
+			// Posts exclusion
+			'exclude_current_post'=> false,
+			'post_not_in'         => '',
+			'cat_not_in'          => '',
+			'tag_not_in'          => '',
+
+			// The title of the post
 			'display_title'       => true,
 			'link_on_title'       => true,
 			'arrow'               => false,
+
+			// The featured image of the post
 			'display_image'       => false,
 			'image_size'          => 'thumbnail',
 			'image_align'         => 'no_change',
 			'image_before_title'  => false,
-			'side_image_margin'   => NULL,
-			'bottom_image_margin' => NULL,
+
+			// The text of the post
 			'excerpt'             => 'excerpt',
 			'exc_length'          => 20,
 			'the_more'            => __( 'Read more&hellip;', 'pis' ),
 			'exc_arrow'           => false,
-			'utility_after_title' => false,
+
+			// Author, date and comments
 			'display_author'      => false,
 			'author_text'         => __( 'By', 'pis' ),
 			'linkify_author'      => false,
@@ -308,28 +399,49 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'comments'            => false,
 			'comments_text'       => __( 'Comments:', 'pis' ),
 			'utility_sep'         => '|',
+			'utility_after_title' => false,
+
+			// The categories of the post
 			'categories'          => false,
 			'categ_text'          => __( 'Category:', 'pis' ),
 			'categ_sep'           => ',',
+
+			// The tags of the post
 			'tags'                => false,
 			'tags_text'           => __( 'Tags:', 'pis' ),
 			'hashtag'             => '#',
 			'tag_sep'             => '',
+
+			// The custom field
 			'custom_field'        => false,
 			'custom_field_txt'    => '',
 			'meta'                => '',
 			'custom_field_key'    => false,
 			'custom_field_sep'    => ':',
+
+			// The link to the archive
 			'archive_link'        => false,
 			'link_to'             => 'category',
 			'archive_text'        => __( 'Display all posts', 'pis' ),
+
+			// Text when no posts found
 			'nopost_text'         => __( 'No posts yet.', 'pis' ),
+
+			// Extras
 			'container_class'     => '',
 			'list_element'        => 'ul',
 			'remove_bullets'      => false,
+
+			// Cache
+			'cached'              => false,
+			'cache_time'          => '',
+
+			// Elements margins
 			'margin_unit'         => 'px',
 			'intro_margin'        => NULL,
 			'title_margin'        => NULL,
+			'side_image_margin'   => NULL,
+			'bottom_image_margin' => NULL,
 			'excerpt_margin'      => NULL,
 			'utility_margin'      => NULL,
 			'categories_margin'   => NULL,
@@ -338,8 +450,11 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'archive_margin'      => NULL,
 			'noposts_margin'      => NULL,
 			'custom_styles'       => '',
-			'cached'              => false,
-			'cache_time'          => '',
+
+			// Debug
+			'debug_query'         => false,
+			'debug_params'        => false,
+			'debug_query_number'  => false,
 		);
 		$instance            = wp_parse_args( (array) $instance, $defaults );
 		$ignore_sticky       = (bool) $instance['ignore_sticky'];
@@ -363,6 +478,9 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$archive_link        = (bool) $instance['archive_link'];
 		$remove_bullets      = (bool) $instance['remove_bullets'];
 		$cached              = (bool) $instance['cached'];
+		$debug_query         = (bool) $instance['debug_query'];
+		$debug_params        = (bool) $instance['debug_params'];
+		$debug_query_number  = (bool) $instance['debug_query_number'];
 		?>
 
 		<style>
@@ -381,24 +499,24 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			}
 		</style>
 
+		<h4 class="pis-gray-title"><?php _e( 'The title of the widget', 'pis' ); ?></h4>
+
+		<?php pis_form_input_text( __( 'Title', 'pis' ), $this->get_field_id('title'), $this->get_field_name('title'), esc_attr( $instance['title'] ) ); ?>
+
+		<?php pis_form_input_text( __( 'Link the title of the widget to this URL', 'pis' ), $this->get_field_id('title_link'), $this->get_field_name('title_link'), esc_url( $instance['title_link'] ) ); ?>
+
+		<?php pis_form_textarea(
+			__( 'Place this text after the title', 'pis' ),
+			$this->get_field_id('intro'),
+			$this->get_field_name('intro'),
+			$instance['intro'],
+			$style = 'resize: vertical; width: 100%; height: 80px;',
+			$comment = sprintf( __( 'Allowed HTML: %s. Other tags will be stripped.', 'pis' ), '<code>a</code>, <code>strong</code>, <code>em</code>' )
+		); ?>
+
+		<hr />
+
 		<div class="pis-column">
-
-			<h4 class="pis-gray-title"><?php _e( 'The title of the widget', 'pis' ); ?></h4>
-
-			<?php pis_form_input_text( __( 'Title', 'pis' ), $this->get_field_id('title'), $this->get_field_name('title'), esc_attr( $instance['title'] ) ); ?>
-
-			<?php pis_form_input_text( __( 'Link the title of the widget to this URL', 'pis' ), $this->get_field_id('title_link'), $this->get_field_name('title_link'), esc_url( $instance['title_link'] ) ); ?>
-
-			<?php pis_form_textarea(
-				__( 'Place this text after the title', 'pis' ),
-				$this->get_field_id('intro'),
-				$this->get_field_name('intro'),
-				$instance['intro'],
-				$style = 'resize: vertical; width: 100%; height: 80px;',
-				$comment = sprintf( __( 'Allowed HTML: %s. Other tags will be stripped.', 'pis' ), '<code>a</code>, <code>strong</code>, <code>em</code>' )
-			); ?>
-
-			<hr />
 
 			<h4 class="pis-gray-title"><?php _e( 'Posts retrieving', 'pis' ); ?></h4>
 
@@ -442,7 +560,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			<?php // ================= Author
 			$options = array(
 				array(
-					'value' => 'NULL',
+					'value' => '',
 					'desc'  => __( 'Any', 'pis' )
 				)
 			);
@@ -697,6 +815,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			<?php // ================= Image sizes
 			$options = array();
 			$sizes = (array) get_intermediate_image_sizes();
+			$sizes[] = 'full';
 			foreach ( $sizes as $size ) {
 				$options[] = array(
 					'value' => $size,
@@ -959,75 +1078,83 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			<?php // ================= Archive link text
 			pis_form_input_text( __( 'Use this text for archive link', 'pis' ), $this->get_field_id( 'archive_text' ), $this->get_field_name( 'archive_text' ), esc_attr( $instance['archive_text'] ), __( 'Please, note that if you don\'t select any taxonomy, the link won\'t appear.', 'pis' ) ); ?>
 
+			<hr />
+
+			<h4 class="pis-gray-title"><?php _e( 'Text when no posts found', 'pis' ); ?></h4>
+
 			<?php // ================= No posts text
-			pis_form_input_text( __( 'Use this text when there are no posts', 'pis' ), $this->get_field_id( 'nopost_text' ), $this->get_field_name( 'nopost_text' ), esc_attr( $instance['nopost_text'] ) ); ?>
-
-			<hr />
-
-			<h4 class="pis-gray-title"><?php _e( 'Extras', 'pis' ); ?></h4>
-
-			<?php // ================= Container Class
 			pis_form_input_text(
-				__( 'Add a global container with this CSS class', 'pis' ),
-				$this->get_field_id('container_class'),
-				$this->get_field_name('container_class'),
-				esc_attr( $instance['container_class'] ),
-				sprintf(
-					__( 'The plugin will add a new %s container with this class. You can enter only one class and the name could contain only letters, hyphens and underscores. The new container will enclose all the widget, from the title up to the last line.', 'pis' ), '<code>div</code>' )
-			); ?>
-
-			<?php // ================= Type of HTML for list of posts
-			$options = array(
-				'ul' => array(
-					'value' => 'ul',
-					'desc'  => __( 'Unordered list', 'pis' )
-				),
-				'ol' => array(
-					'value' => 'ol',
-					'desc'  => __( 'Ordered list', 'pis' )
-				),
-			);
-			pis_form_select(
-				__( 'Use this type of list for the posts', 'pis' ),
-				$this->get_field_id('list_element'),
-				$this->get_field_name('list_element'),
-				$options,
-				$instance['list_element']
-			); ?>
-
-			<?php // ================= Remove bullets and left space
-			pis_form_checkbox(
-				__( 'Try to remove the bullets and the extra left space from the list elements', 'pis' ),
-				$this->get_field_id( 'remove_bullets' ),
-				$this->get_field_name( 'remove_bullets' ),
-				checked( $remove_bullets, true, false ),
-				sprintf( __( 'If the plugin doesn\'t remove the bullets and/or the extra left space, you have to %1$sedit your CSS file%2$s manually.', 'pis' ), '<a href="' . admin_url( 'theme-editor.php' ) . '" target="_blank">', '</a>' )
-			); ?>
-
-			<hr />
-
-			<h4 class="pis-gray-title"><?php _e( 'Cache', 'pis' ); ?></h4>
-
-			<?php // ================= Cache for the query
-			pis_form_checkbox( __( 'Use a cache to serve the output', 'pis' ),
-				$this->get_field_id( 'cached' ),
-				$this->get_field_name( 'cached' ),
-				checked( $cached, true, false ),
-				__( 'This option, if activated, will increase the performance.', 'pis' )
-			); ?>
-
-			<?php // ================= Cache duration
-			pis_form_input_text(
-				__( 'The cache will be used for (in seconds)', 'pis' ),
-				$this->get_field_id('cache_time'),
-				$this->get_field_name('cache_time'),
-				esc_attr( $instance['cache_time'] ),
-				sprintf( __( 'For example, %1$s for one hour of cache. To reset the cache, enter %2$s and save the widget.', 'pis' ), '<code>3600</code>', '<code>0</code>' )
+				__( 'Use this text when there are no posts', 'pis' ),
+				$this->get_field_id( 'nopost_text' ),
+				$this->get_field_name( 'nopost_text' ),
+				esc_attr( $instance['nopost_text'] ),
+				__( 'If the field is blank, the whole widget won\'t be displayed at all if no posts are found.', 'pis' )
 			); ?>
 
 		</div>
 
 		<div class="clear"></div>
+
+		<h4 class="pis-gray-title"><?php _e( 'Extras', 'pis' ); ?></h4>
+
+		<?php // ================= Container Class
+		pis_form_input_text(
+			__( 'Add a global container with this CSS class', 'pis' ),
+			$this->get_field_id('container_class'),
+			$this->get_field_name('container_class'),
+			esc_attr( $instance['container_class'] ),
+			sprintf(
+				__( 'Enter the name of your container (for example, %1$s). The plugin will add a new %2$s container with this class. You can enter only one class and the name may contain only letters, hyphens and underscores. The new container will enclose all the widget, from the title to the last line.', 'pis' ), '<code>my-container</code>', '<code>div</code>' )
+		); ?>
+
+		<?php // ================= Type of HTML for list of posts
+		$options = array(
+			'ul' => array(
+				'value' => 'ul',
+				'desc'  => __( 'Unordered list', 'pis' )
+			),
+			'ol' => array(
+				'value' => 'ol',
+				'desc'  => __( 'Ordered list', 'pis' )
+			),
+		);
+		pis_form_select(
+			__( 'Use this type of list for the posts', 'pis' ),
+			$this->get_field_id('list_element'),
+			$this->get_field_name('list_element'),
+			$options,
+			$instance['list_element']
+		); ?>
+
+		<?php // ================= Remove bullets and left space
+		pis_form_checkbox(
+			__( 'Try to remove the bullets and the extra left space from the list elements', 'pis' ),
+			$this->get_field_id( 'remove_bullets' ),
+			$this->get_field_name( 'remove_bullets' ),
+			checked( $remove_bullets, true, false ),
+			sprintf( __( 'If the plugin doesn\'t remove the bullets and/or the extra left space, you have to %1$sedit your CSS file%2$s manually.', 'pis' ), '<a href="' . admin_url( 'theme-editor.php' ) . '" target="_blank">', '</a>' )
+		); ?>
+
+		<hr />
+
+		<h4 class="pis-gray-title"><?php _e( 'Cache', 'pis' ); ?></h4>
+
+		<?php // ================= Cache for the query
+		pis_form_checkbox( __( 'Use a cache to serve the output', 'pis' ),
+			$this->get_field_id( 'cached' ),
+			$this->get_field_name( 'cached' ),
+			checked( $cached, true, false ),
+			__( 'This option, if activated, will increase the performance.', 'pis' )
+		); ?>
+
+		<?php // ================= Cache duration
+		pis_form_input_text(
+			__( 'The cache will be used for (in seconds)', 'pis' ),
+			$this->get_field_id('cache_time'),
+			$this->get_field_name('cache_time'),
+			esc_attr( $instance['cache_time'] ),
+			sprintf( __( 'For example, %1$s for one hour of cache. To reset the cache, enter %2$s and save the widget.', 'pis' ), '<code>3600</code>', '<code>0</code>' )
+		); ?>
 
 		<hr />
 
@@ -1101,6 +1228,36 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			$this->get_field_name('custom_styles'),
 			$instance['custom_styles'],
 			$style = 'resize: vertical; width: 100%; height: 80px;'
+		); ?>
+
+		<hr />
+
+		<h4 class="pis-gray-title"><?php _e( 'Debugging', 'pis' ); ?></h4>
+
+		<p><strong><?php _e( 'Use this options for debugging purposes only. Please note that the informations will be displayed publicly on your site.', 'pis' ); ?></strong></p>
+
+		<?php // ================= Debug: display the query for the widget
+		pis_form_checkbox(
+			__( 'Display the query for the widget', 'pis' ),
+			$this->get_field_id( 'debug_query' ),
+			$this->get_field_name( 'debug_query' ),
+			checked( $debug_query, true, false )
+		); ?>
+
+		<?php // ================= Debug: display the complete set of parameters for the widget
+		pis_form_checkbox(
+			__( 'Display the complete set of parameters for the widget', 'pis' ),
+			$this->get_field_id( 'debug_params' ),
+			$this->get_field_name( 'debug_params' ),
+			checked( $debug_params, true, false )
+		); ?>
+
+		<?php // ================= Debug: display the total number of queries
+		pis_form_checkbox(
+			__( 'Display the total number of queries, including WordPress, current theme and all active plugins', 'pis' ),
+			$this->get_field_id( 'debug_query_number' ),
+			$this->get_field_name( 'debug_query_number' ),
+			checked( $debug_query_number, true, false )
 		); ?>
 
 		<div class="clear"></div>

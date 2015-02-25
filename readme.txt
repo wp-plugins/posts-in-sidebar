@@ -4,7 +4,7 @@ Donate link: http://dev.aldolat.it/projects/posts-in-sidebar/
 Tags: post, sidebar, widget
 Requires at least: 3.5
 Tested up to: 4.1
-Stable tag: 1.22
+Stable tag: 1.23
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -61,6 +61,17 @@ Please, see [FAQ page](https://github.com/aldolat/posts-in-sidebar/wiki/FAQ) on 
 6. Displaying the full set of items (categories, date, author, tags, and so on).
 
 == Changelog ==
+
+= 1.23 =
+
+* NEW: the widget can be hidden now if no posts are found (props by der_velli).
+* NEW: Added the option to display the full size of the featured image (props by Ilaria).
+* Moved plugin's functions files into subfolder.
+* Moved plugin's functions into separate file.
+* Added debugging tools.
+* Fixed one undefined index notice.
+* Updated the Hebrew translation (thanks to Ahrale).
+* Code improvements.
 
 = 1.22 =
 

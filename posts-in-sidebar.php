@@ -1,42 +1,36 @@
 <?php
 /**
  * Plugin Name: Posts in Sidebar
- * Description:  Publish a list of posts in your sidebar
  * Plugin URI: http://dev.aldolat.it/projects/posts-in-sidebar/
+ * Description: Publish a list of posts in your sidebar
+ * Version: 1.23
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
- * Version: 1.22
- * License: GPLv3 or later
  * Text Domain: pis
  * Domain Path: /languages/
- *
- * Copyright (C) 2009, 2014  Aldo Latino  (email : aldolat@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * @package PostsInSidebar
- * @version 1.21
- * @author Aldo Latino <aldolat@gmail.com>
- * @copyright Copyright (c) 2009 - 2014, Aldo Latino
- * @link http://dev.aldolat.it/projects/posts-in-sidebar/
- * @license http://www.gnu.org/licenses/gpl.html
+ * License: GPLv3 or later
  */
+
+/* Copyright (C) 2009, 2014  Aldo Latino  (email : aldolat@gmail.com)
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  * Define the version of the plugin.
  */
-define( 'PIS_VERSION', '1.22' );
+define( 'PIS_VERSION', '1.23' );
 
 /**
  * The core function.
@@ -46,37 +40,49 @@ define( 'PIS_VERSION', '1.22' );
  */
 function pis_posts_in_sidebar( $args ) {
 	$defaults = array(
+		// The title of the widget
 		'intro'               => '',
+
+		// Posts retrieving
 		'post_type'           => 'post',    // post, page, media, or any custom post type
 		'posts_id'            => '',        // Post/Pages IDs, comma separated
-		'author'              => NULL,      // Author nicename, NOT name
-		'cat'                 => NULL,      // Category slugs, comma separated
-		'tag'                 => NULL,      // Tag slugs, comma separated
+		'author'              => '',        // Author nicename, NOT name
+		'cat'                 => '',        // Category slugs, comma separated
+		'tag'                 => '',        // Tag slugs, comma separated
 		'post_format'         => '',
 		'number'              => get_option( 'posts_per_page' ),
 		'orderby'             => 'date',
 		'order'               => 'DESC',
-		'exclude_current_post'=> false,
-		'post_not_in'         => '',
-		'cat_not_in'          => '',        // Category ID, comma separated
-		'tag_not_in'          => '',        // Tag ID, comma separated
 		'offset_number'       => '',
 		'post_status'         => 'publish',
 		'post_meta_key'       => '',
 		'post_meta_val'       => '',
 		'ignore_sticky'       => false,
+
+		// Posts exclusion
+		'exclude_current_post'=> false,
+		'post_not_in'         => '',
+		'cat_not_in'          => '',        // Category ID, comma separated
+		'tag_not_in'          => '',        // Tag ID, comma separated
+
+		// The title of the post
 		'display_title'       => true,
 		'link_on_title'       => true,
 		'arrow'               => false,
+
+		// The featured image of the post
 		'display_image'       => false,
 		'image_size'          => 'thumbnail',
 		'image_align'         => 'no_change',
 		'image_before_title'  => false,
+
+		// The text of the post
 		'excerpt'             => 'excerpt', // can be "full_content", "rich_content", "content", "more_excerpt", "excerpt", "none"
 		'exc_length'          => 20,        // In words
 		'the_more'            => __( 'Read more&hellip;', 'pis' ),
 		'exc_arrow'           => false,
-		'utility_after_title' => false,
+
+		// Author, date and comments
 		'display_author'      => false,
 		'author_text'         => __( 'By', 'pis' ),
 		'linkify_author'      => false,
@@ -86,24 +92,44 @@ function pis_posts_in_sidebar( $args ) {
 		'comments'            => false,
 		'comments_text'       => __( 'Comments:', 'pis' ),
 		'utility_sep'         => '|',
+		'utility_after_title' => false,
+
+		// The categories of the post
 		'categories'          => false,
 		'categ_text'          => __( 'Category:', 'pis' ),
 		'categ_sep'           => ',',
+
+		// The tags of the post
 		'tags'                => false,
 		'tags_text'           => __( 'Tags:', 'pis' ),
 		'hashtag'             => '#',
 		'tag_sep'             => '',
+
+		// The custom field
 		'custom_field'        => false,
 		'custom_field_txt'    => '',
 		'meta'                => '',
 		'custom_field_key'    => false,
 		'custom_field_sep'    => ':',
+
+		// The link to the archive
 		'archive_link'        => false,
 		'link_to'             => 'category',
 		'archive_text'        => __( 'Display all posts', 'pis' ),
+
+		// Text when no posts found
 		'nopost_text'         => __( 'No posts yet.', 'pis' ),
+
+		// Extras
 		'list_element'        => 'ul',
 		'remove_bullets'      => false,
+
+		// Cache
+		'cached'              => false,
+		'cache_time'          => 3600,
+		'widget_id'           => '',
+
+		// Elements margins
 		'margin_unit'         => 'px',
 		'intro_margin'        => NULL,
 		'title_margin'        => NULL,
@@ -115,23 +141,24 @@ function pis_posts_in_sidebar( $args ) {
 		'tags_margin'         => NULL,
 		'archive_margin'      => NULL,
 		'noposts_margin'      => NULL,
-		'cached'              => false,
-		'cache_time'          => 3600,
-		'widget_id'           => '',
+
+		// Debug
+		'debug_query'         => false,
+		'debug_params'        => false,
+		'debug_query_number'  => false,
+
 	);
 	$args = wp_parse_args( $args, $defaults );
 	extract( $args, EXTR_SKIP );
 
-	$author   == 'NULL' ? $author   = '' : $author   = $author;
-	$cat      == 'NULL' ? $cat      = '' : $cat      = $cat;
-	$tag      == 'NULL' ? $tag      = '' : $tag      = $tag;
-
 	// Some params accept only an array
-	if ( $posts_id    && ! is_array( $posts_id ) )    $posts_id    = explode( ',', $posts_id );    else $posts_id    = NULL;
-	if ( $post_not_in && ! is_array( $post_not_in ) ) $post_not_in = explode( ',', $post_not_in ); else $post_not_in = NULL;
-	if ( $cat_not_in  && ! is_array( $cat_not_in ) )  $cat_not_in  = explode( ',', $cat_not_in );  else $cat_not_in  = NULL;
-	if ( $tag_not_in  && ! is_array( $tag_not_in ) )  $tag_not_in  = explode( ',', $tag_not_in );  else $tag_not_in  = NULL;
+	if ( $posts_id    && ! is_array( $posts_id ) )    $posts_id    = explode( ',', $posts_id );    else $posts_id    = '';
+	if ( $post_not_in && ! is_array( $post_not_in ) ) $post_not_in = explode( ',', $post_not_in ); else $post_not_in = '';
+	if ( $cat_not_in  && ! is_array( $cat_not_in ) )  $cat_not_in  = explode( ',', $cat_not_in );  else $cat_not_in  = '';
+	if ( $tag_not_in  && ! is_array( $tag_not_in ) )  $tag_not_in  = explode( ',', $tag_not_in );  else $tag_not_in  = '';
 
+	// Get the ID of the current post.
+	// This will be used in case the user do not want to display the same post in the main body and in the sidebar.
 	if ( ( is_single() || is_page() ) && $exclude_current_post ) {
 		$post_not_in[] = get_the_id();
 	}
@@ -176,7 +203,7 @@ function pis_posts_in_sidebar( $args ) {
 
 	} ?>
 
-	<?php // If in a single post, get the ID of the post of the main loop ?>
+	<?php // If in a single post, get the ID of the post of the main loop. This will be used to add the "current-post" CSS class. ?>
 	<?php if ( is_single() ) {
 		global $post;
 		$single_post_id = $post->ID;
@@ -210,10 +237,14 @@ function pis_posts_in_sidebar( $args ) {
 				<li <?php pis_class( $postclass, apply_filters( 'pis_li_class', '' ) ); ?>>
 
 					<?php /* The thumbnail before the title */ ?>
-					<?php if ( $display_image && $image_before_title && has_post_thumbnail() ) {
-						$title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) );
-						pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = true );
-					} ?>
+					<?php if ( $image_before_title ) : ?>
+
+						<?php if ( $display_image && has_post_thumbnail() ) {
+							$title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) );
+							pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = true );
+						} ?>
+
+					<?php endif; // Close if $image_before_title ?>
 
 					<?php /* The title */ ?>
 					<?php if ( $display_title ) { ?>
@@ -270,7 +301,7 @@ function pis_posts_in_sidebar( $args ) {
 
 					<?php /* The categories */ ?>
 					<?php if ( $categories ) {
-						$list_of_categories = get_the_category_list( $categ_sep . ' ', '', $pis_query->post->ID );
+						$list_of_categories = get_the_term_list( $pis_query->post->ID, 'category', '', $categ_sep . ' ', '' );
 						if ( $list_of_categories ) { ?>
 							<p <?php echo pis_paragraph( $categories_margin, $margin_unit, 'pis-categories-links', 'pis_categories_class' ); ?>>
 								<?php if ( $categ_text ) echo $categ_text . '&nbsp';
@@ -377,406 +408,66 @@ function pis_posts_in_sidebar( $args ) {
 	<?php /* Reset this custom query */ ?>
 	<?php wp_reset_postdata(); ?>
 
+	<?php /* Debugging */ ?>
+
+	<?php if ( $debug_query || $debug_params || $debug_query_number ) { ?>
+		<hr />
+		<h3>Debugging</h3>
+	<?php } ?>
+
+	<?php if ( $debug_query ) { ?>
+		<p><strong><?php _e( 'The parameters for the query:', 'pis' ); ?></strong></p>
+		<pre><?php print_r($params); ?></pre>
+		<hr />
+	<?php } ?>
+
+	<?php if ( $debug_params ) { ?>
+		<p><strong><?php _e( 'The complete set of parameters of the widget:', 'pis' ); ?></strong></p>
+		<pre><?php print_r($args); ?></pre>
+		<hr />
+	<?php } ?>
+
+	<?php if ( $debug_query_number ) { ?>
+		<p><strong><?php _e( 'The total number of queries of this WordPress installation:', 'pis' ); ?></strong></p>
+		<pre><?php printf( __( '%1$s queries in %2$s seconds', 'pis' ), get_num_queries(), timer_stop() ); ?></pre>
+		<hr />
+	<?php } ?>
+
+	<?php /* Whether the cache is active */ ?>
 	<?php if ( $cached ) {
 		$pis_cache_active = ' - Cache is active';
 	} else {
 		$pis_cache_active = '';
-	}
-	echo '<!-- Generated by Posts in Sidebar v' . PIS_VERSION . $pis_cache_active . ' -->'; ?>
+	} ?>
+
+	<?php /* Prints the version of Posts in Sidebar and if the cache is active. */ ?>
+	<?php echo '<!-- Generated by Posts in Sidebar v' . PIS_VERSION . $pis_cache_active . ' -->'; ?>
 
 <?php }
 
 
 /**
- * Return the class for the HTML element.
+ * Include the plugin functions.
  *
- * @since 1.9
- *
- * @param string $default One or more classes, defined by plugin's developer, to add to the class list.
- * @param string|array $class One or more classes, defined by the user, to add to the class list.
- * @param boolean $echo If the function should echo or not the output. Default true.
- * @return string $output List of classes.
+ * @since 1.23
  */
-function pis_class( $default = '', $class = '', $echo = true ) {
-
-	// Define $classes as array
-	$classes = array();
-
-	// If $default is not empy, add the value ad an element of the array
-	if( ! empty( $default ) )
-		$classes[] = $default;
-
-	// If $class is not empty, transform it into an array and add the elements to the array
-	if ( ! empty( $class ) ) {
-		if ( ! is_array( $class ) ) $class = preg_split( '#\s+#', $class );
-		$classes = array_merge( $classes, $class );
-	}
-
-	// Escape evil chars in $classes
-	$classes = array_map( 'esc_attr', $classes );
-
-	// Remove null or empty or space-only-filled elements from the array
-	foreach ( $classes as $key => $value ) {
-		if ( is_null( $value ) || $value == '' || $value == ' ' ) {
-			unset( $classes[ $key ] );
-		}
-	}
-
-	// Convert the array into string
-	$classes = implode( ' ', $classes );
-
-	// Complete the final output
-	$classes = 'class="' . $classes . '"';
-
-	if ( true === $echo )
-		echo apply_filters( 'pis_classes', $classes );
-	else
-		return apply_filters( 'pis_classes', $classes );
-}
+include_once( plugin_dir_path( __FILE__ ) . 'inc/pis-functions.php' );
 
 
 /**
- * Return the paragraph class with inline style
- *
- * @since 1.12
- *
- * @param string $margin The margin of the paragraph.
- * @param string $unit The unit measure to be used.
- * @param string $class The default class defined by the plugin's developer.
- * @param string $class_filter The name of the class filter.
- * @param boolean $class_echo If the pis_class() function should echo or not the output.
- * @return string $output The class and the inline style.
- * @uses pis_class()
- */
-function pis_paragraph( $margin, $unit, $class, $class_filter ) {
-	( ! is_null( $margin ) ) ? $style = ' style="margin-bottom: ' . $margin . $unit . ';"' : $style = '';
-	$output = pis_class( $class, apply_filters( $class_filter, '' ) ) . $style;
-	return $output;
-}
-
-
-/**
-* Return the given text with paragraph breaks (HTML <br />).
-*
-* @since 1.12
-* @param string $text The text to be checked.
-* @return string $text The checked text with paragraph breaks.
-*/
-function pis_break_text( $text ) {
-	// Convert cross-platform newlines into HTML '<br />'
-	$text = str_replace( array( "\r\n", "\n", "\r" ), "<br />", $text );
-	return $text;
-}
-
-/**
- * Return the array containing the custom fields of the post.
- *
- * @since 1.12
- * @return array The custom fields of the post.
- */
-function pis_meta() {
-	global $wpdb;
-	$limit = (int) apply_filters( 'pis_postmeta_limit', 30 );
-	$keys = $wpdb->get_col( "
-		SELECT meta_key
-		FROM $wpdb->postmeta
-		GROUP BY meta_key
-		HAVING meta_key NOT LIKE '\_%'
-		ORDER BY meta_key
-		LIMIT $limit" );
-	if ( $keys )
-		natcasesort($keys);
-	return $keys;
-}
-
-
-/**
- * Generate an HTML arrow.
- *
- * @since 1.15
- * @return string $output The HTML arrow.
- */
-function pis_arrow() {
-	$the_arrow = '&rarr;';
-	if ( is_rtl() ) $the_arrow = '&larr;';
-
-	$output = '&nbsp;<span ' . pis_class( 'pis-arrow', apply_filters( 'pis_arrow_class', '' ), false ) . '>' . $the_arrow . '</span>';
-
-	return $output;
-}
-
-
-/**
- * Generate the output for the more and/or the HTML arrow.
- *
- * @since 1.15
- * @uses pis_arrow()
- * @param string $the_more The text to be displayed for "Continue reading". Default empty.
- * @param boolean $exc_arrow If the arrow must be displayed or not. Default false.
- * @return string The HTML arrow linked to the post.
- */
-function pis_more_arrow( $the_more = '', $exc_arrow = false ) {
-	if ( $the_more || $exc_arrow ) {
-		if ( $exc_arrow ) {
-			$the_arrow = pis_arrow();
-		} else {
-			$the_arrow = '';
-		} ?>
-		<span <?php pis_class( 'pis-more', apply_filters( 'pis_more_class', '' ) ); ?>>
-			<a href="<?php echo the_permalink(); ?>" title="<?php esc_attr_e( 'Read the full post', 'pis' ); ?>" rel="bookmark">
-				<?php echo $the_more . '&nbsp;' . $the_arrow; ?>
-			</a>
-		</span>
-	<?php }
-}
-
-
-/**
- * Include the widget
+ * Include the widget.
  *
  * @since 1.1
  */
-include_once( plugin_dir_path( __FILE__ ) . 'posts-in-sidebar-widget.php' );
+include_once( plugin_dir_path( __FILE__ ) . 'inc/posts-in-sidebar-widget.php' );
 
 
 /**
- * Include the widget form functions
+ * Include the widget form functions.
  *
  * @since 1.12
  */
-include_once( plugin_dir_path( __FILE__ ) . 'widget-form-functions.php' );
-
-
-/**
- * Add the custom styles to wp_head hook.
- *
- * @since 1.13
- * @return The HTML for custom styles in the HEAD section.
- */
-function pis_add_styles_to_head() {
-	// Get the options from the database.
-	$custom_styles = (array) get_option( 'widget_pis_posts_in_sidebar' );
-
-	// Define $styles as an array.
-	$styles = array();
-
-	// Get all the values of "custom_styles" key into $styles.
-	foreach ( $custom_styles as $key => $value ) {
-		$styles[] = $value['custom_styles'];
-	}
-
-	// Remove any empty elements from the array
-	$styles = array_filter( $styles );
-
-	// Make the array as string.
-	$styles = implode( "\n", $styles );
-
-	// Print the output if it's not empty.
-	if ( $styles ) echo '<style type="text/css">' . $styles . '</style>';
-}
-add_action( 'wp_head', 'pis_add_styles_to_head' );
-
-
-/**
- * Add the utilities section: author, date of the post and comments.
- *
- * @since 1.18
- * @return The HTML for the section.
- */
-function pis_utility_section( $display_author, $display_date, $comments, $utility_margin, $margin_unit, $author_text, $linkify_author, $utility_sep, $date_text, $linkify_date, $comments_text ) { ?>
-	<?php if ( $display_author || $display_date || $comments ) { ?>
-		<p <?php echo pis_paragraph( $utility_margin, $margin_unit, 'pis-utility', 'pis_utility_class' ); ?>>
-	<?php } ?>
-
-		<?php /* The author */ ?>
-		<?php if ( $display_author ) { ?>
-			<span <?php pis_class( 'pis-author', apply_filters( 'pis_author_class', '' ) ); ?>>
-				<?php if ( $author_text ) echo $author_text . '&nbsp;'; ?><?php
-				if ( $linkify_author ) { ?>
-					<?php
-					$author_title = sprintf( __( 'View all posts by %s', 'pis' ), get_the_author() );
-					$author_link  = get_author_posts_url( get_the_author_meta( 'ID' ) );
-					?>
-					<a <?php pis_class( 'pis-author-link', apply_filters( 'pis_author_link_class', '' ) ); ?> href="<?php echo $author_link; ?>" title="<?php echo esc_attr( $author_title ); ?>" rel="author">
-						<?php echo get_the_author(); ?></a>
-				<?php } else {
-					echo get_the_author();
-				} ?>
-			</span>
-		<?php } ?>
-
-		<?php /* The date */ ?>
-		<?php if ( $display_date ) : ?>
-			<?php if ( $display_author ) { ?>
-				<span <?php pis_class( 'pis-separator', apply_filters( 'pis_separator_class', '' ) ); ?>>&nbsp;<?php echo $utility_sep; ?>&nbsp;</span>
-			<?php } ?>
-			<span <?php pis_class( 'pis-date', apply_filters( 'pis_date_class', '' ) ); ?>>
-				<?php if ( $date_text ) echo $date_text . '&nbsp;'; ?><?php
-				if ( $linkify_date ) { ?>
-					<?php $date_title = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) ); ?>
-					<a <?php pis_class( 'pis-date-link', apply_filters( 'pis_date_link_class', '' ) ); ?> href="<?php the_permalink(); ?>" title="<?php echo esc_attr( $date_title ); ?>" rel="bookmark">
-						<?php echo get_the_date(); ?></a>
-				<?php } else {
-					echo get_the_date();
-				} ?>
-			</span>
-
-		<?php endif; ?>
-
-		<?php /* The comments */ ?>
-		<?php if ( ! post_password_required() ) : ?>
-			<?php if ( $comments ) { ?>
-				<?php if ( $display_author || $display_date ) { ?>
-					<span <?php pis_class( 'pis-separator', apply_filters( 'pis_separator_class', '' ) ); ?>>&nbsp;<?php echo $utility_sep; ?>&nbsp;</span>
-				<?php } ?>
-				<span <?php pis_class( 'pis-comments', apply_filters( 'pis_comments_class', '' ) ); ?>>
-					<?php if ( $comments_text ) echo $comments_text . '&nbsp;'; ?><?php
-					comments_popup_link( '<span class="pis-reply">' . __( 'Leave a comment', 'pis' ) . '</span>', __( '1 Comment', 'pis' ), __( '% Comments', 'pis' ) ); ?>
-				</span>
-			<?php } ?>
-		<?php endif; ?>
-
-	<?php if ( $display_author || $display_date || $comments ) : ?>
-		</p>
-	<?php endif; ?>
-<?php }
-
-
-/**
- * Add the thumbnail of the post.
- *
- * @since 1.18
- * @return The HTML for the thumbnail.
- */
-function pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = false ) {
-	if ( $thumb_wrap ) {
-		$open_wrap = '<p class="pis-thumbnail">';
-		$close_wrap = '</p>';
-	} else {
-		$open_wrap = '';
-		$close_wrap = '';
-	}
-
-	switch ( $image_align ) {
-		case 'left' :
-			$image_class = ' alignleft';
-			$image_style = '';
-			if ( ! is_null( $side_image_margin ) || ! is_null( $bottom_image_margin ) ) {
-				$image_style = ' style="display: inline; float: left; margin-right: ' . $side_image_margin . $margin_unit . '; margin-bottom: ' . $bottom_image_margin . $margin_unit . ';"';
-				$image_style = str_replace( ' margin-right: px;', '', $image_style);
-				$image_style = str_replace( ' margin-bottom: px;', '', $image_style);
-			}
-		break;
-		case 'right':
-			$image_class = ' alignright';
-			$image_style = '';
-			if ( ! is_null( $side_image_margin ) || ! is_null( $bottom_image_margin ) ) {
-				$image_style = ' style="display: inline; float: right; margin-left: ' . $side_image_margin . $margin_unit . '; margin-bottom: ' . $bottom_image_margin . $margin_unit . ';"';
-				$image_style = str_replace( ' margin-left: px;', '', $image_style);
-				$image_style = str_replace( ' margin-bottom: px;', '', $image_style);
-			}
-		break;
-		case 'center':
-			$image_class = ' aligncenter';
-			$image_style = '';
-			if ( ! is_null( $bottom_image_margin ) )
-				$image_style = ' style="margin-bottom: ' . $bottom_image_margin . $margin_unit . ';"';
-		break;
-		default:
-			$image_class = '';
-			$image_style = '';
-		break;
-	} ?>
-	<?php echo $open_wrap; ?>
-	<a <?php pis_class( 'pis-thumbnail-link', apply_filters( 'pis_thumbnail_link_class', '' ) ); ?> href="<?php the_permalink(); ?>" title="<?php echo esc_attr( $title_link ); ?>" rel="bookmark">
-		<?php $image_html = get_the_post_thumbnail(
-			$pis_query->post->ID,
-			$image_size,
-			array(
-				'class' => 'pis-thumbnail-img' . ' ' . apply_filters( 'pis_thumbnail_class', '' ) . $image_class,
-			)
-		);
-		$image_html = str_replace( '<img', '<img' . $image_style, $image_html );
-		echo $image_html;
-		?></a>		
-	<?php echo $close_wrap;
-}
-
-
-/**
- * Add the text of the post in form of excerpt, full post, and so on.
- *
- * @since 1.18
- * @return The HTML for the text of the post.
- */
-function pis_the_text( $excerpt, $pis_query, $exc_length, $the_more, $exc_arrow ) {
-	/*
-		"Full content"   = the content of the post as displayed in the page.
-		"Rich content"   = the content with inline images, titles and more (shortcodes will be executed).
-		"Content"        = the full text of the content, whitout any ornament (shortcodes will be stripped).
-		"More excerpt"   = the excerpt up to the point of the "more" tag (inserted by the user).
-		"Excerpt"        = the excerpt as defined by the user or generated by WordPress.
-		"Only Read more" = no excerpt, only the Read more link
-	*/
-	switch ( $excerpt ) :
-
-		case 'full_content':
-			the_content();
-		break;
-
-		case 'rich_content':
-			$content = $pis_query->post->post_content;
-			// Honor any paragraph break
-			$content = pis_break_text( $content );
-			echo apply_filters( 'pis_rich_content', $content );
-		break;
-
-		case 'content':
-			// Remove shortcodes
-			$content = strip_shortcodes( $pis_query->post->post_content );
-			// remove any HTML tag
-			$content = wp_kses( $content, array() );
-			// Honor any paragraph break
-			$content = pis_break_text( $content );
-			echo apply_filters( 'pis_content', $content );
-		break;
-
-		case 'more_excerpt':
-			$excerpt_text = strip_shortcodes( $pis_query->post->post_content );
-			$testformore = strpos( $excerpt_text, '<!--more-->' );
-			if ( $testformore ) {
-				$excerpt_text = substr( $excerpt_text, 0, $testformore );
-			} else {
-				$excerpt_text = wp_trim_words( $excerpt_text, $exc_length, '&hellip;' );
-			}
-			echo apply_filters( 'pis_more_excerpt_text', $excerpt_text );
-			pis_more_arrow( $the_more, $exc_arrow );
-		break;
-
-		case 'excerpt':
-			// If we have a user-defined excerpt...
-			if ( $pis_query->post->post_excerpt ) {
-				// Honor any paragraph break
-				$user_excerpt = pis_break_text( $pis_query->post->post_excerpt );
-				echo apply_filters( 'pis_user_excerpt', $user_excerpt );
-			} else {
-			// ... else generate an excerpt
-				$excerpt_text = strip_shortcodes( $pis_query->post->post_content );
-				$excerpt_text = wp_trim_words( $excerpt_text, $exc_length, '&hellip;' );
-				echo apply_filters( 'pis_excerpt_text', $excerpt_text );
-			}
-			pis_more_arrow( $the_more, $exc_arrow );
-		break;
-
-		case 'only_read_more':
-			$excerpt_text = '';
-			echo apply_filters( 'pis_only_read_more', $excerpt_text );
-			pis_more_arrow( $the_more, $exc_arrow );
-		break;
-
-	endswitch;
-	// Close The text
-}
+include_once( plugin_dir_path( __FILE__ ) . 'inc/widget-form-functions.php' );
 
 
 /**
