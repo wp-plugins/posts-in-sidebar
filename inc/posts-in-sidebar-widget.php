@@ -48,14 +48,6 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		extract( $args );
 
 		/**
-		 * If the user doesn't enter any text in noposts field, the widget won't be displayed.
-		 * 
-		 * @since 1.23
-		 */
-		if ( ! $instance['nopost_text'] )
-			return;
-
-		/**
 		 * Declare some indexes to avoid PHP notice
 		 * 
 		 * @since 1.24
@@ -121,6 +113,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'image_size'          => $instance['image_size'],
 			'image_align'         => $instance['image_align'],
 			'image_before_title'  => $instance['image_before_title'],
+			'custom_image_url'    => $instance['custom_image_url'],
+			'custom_img_no_thumb' => $instance['custom_img_no_thumb'],
 
 			// The text of the post
 			'excerpt'             => $instance['excerpt'],
@@ -165,6 +159,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 			// Text when no posts found
 			'nopost_text'         => $instance['nopost_text'],
+			'hide_widget'         => $instance['hide_widget'],
 
 			// Extras
 			'list_element'        => $instance['list_element'],
@@ -214,7 +209,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 		// The title of the widget
 		$instance['title']      = strip_tags( $new_instance['title'] );
-		$instance['title_link'] = esc_url( $new_instance['title_link'] );
+		$instance['title_link'] = esc_url( strip_tags( $new_instance['title_link'] ) );
 		$allowed_html = array(
 			'a' => array(
 				'href'  => array(),
@@ -259,6 +254,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$instance['image_size']          = $new_instance['image_size'];
 		$instance['image_align']         = $new_instance['image_align'];
 		$instance['image_before_title']  = $new_instance['image_before_title'];
+		$instance['custom_image_url']    = esc_url( strip_tags( $new_instance['custom_image_url'] ) );
+		$instance['custom_img_no_thumb'] = $new_instance['custom_img_no_thumb'];
 
 		// The text of the post
 		$instance['excerpt']             = $new_instance['excerpt'];
@@ -304,6 +301,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 		// Text when no posts found
 		$instance['nopost_text']         = strip_tags( $new_instance['nopost_text'] );
+		$instance['hide_widget']         = $new_instance['hide_widget'];
 
 		// Extras
 		$instance['container_class']     = sanitize_html_class( $new_instance['container_class'] );
@@ -397,6 +395,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'image_size'          => 'thumbnail',
 			'image_align'         => 'no_change',
 			'image_before_title'  => false,
+			'custom_image_url'    => '',
+			'custom_img_no_thumb' => true,
 
 			// The text of the post
 			'excerpt'             => 'excerpt',
@@ -441,6 +441,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 			// Text when no posts found
 			'nopost_text'         => __( 'No posts yet.', 'pis' ),
+			'hide_widget'         => false,
 
 			// Extras
 			'container_class'     => '',
@@ -479,6 +480,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$display_image       = (bool) $instance['display_image'];
 		$image_before_title  = (bool) $instance['image_before_title'];
 		$arrow               = (bool) $instance['arrow'];
+		$custom_img_no_thumb = (bool) $instance['custom_img_no_thumb'];
 		$exc_arrow           = (bool) $instance['exc_arrow'];
 		$utility_after_title = (bool) $instance['utility_after_title'];
 		$display_author      = (bool) $instance['display_author'];
@@ -491,6 +493,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$custom_field        = (bool) $instance['custom_field'];
 		$custom_field_key    = (bool) $instance['custom_field_key'];
 		$archive_link        = (bool) $instance['archive_link'];
+		$hide_widget         = (bool) $instance['hide_widget'];
 		$remove_bullets      = (bool) $instance['remove_bullets'];
 		$cached              = (bool) $instance['cached'];
 		$debug_query         = (bool) $instance['debug_query'];
@@ -516,15 +519,28 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 		<h4 class="pis-gray-title"><?php _e( 'The title of the widget', 'pis' ); ?></h4>
 
-		<?php pis_form_input_text( __( 'Title', 'pis' ), $this->get_field_id('title'), $this->get_field_name('title'), esc_attr( $instance['title'] ) ); ?>
+		<?php pis_form_input_text(
+			__( 'Title', 'pis' ),
+			$this->get_field_id('title'),
+			$this->get_field_name('title'),
+			esc_attr( $instance['title'] ),
+			__( 'From the archive', 'pis' )
+		); ?>
 
-		<?php pis_form_input_text( __( 'Link the title of the widget to this URL', 'pis' ), $this->get_field_id('title_link'), $this->get_field_name('title_link'), esc_url( $instance['title_link'] ) ); ?>
+		<?php pis_form_input_text(
+			__( 'Link the title of the widget to this URL', 'pis' ),
+			$this->get_field_id('title_link'),
+			$this->get_field_name('title_link'),
+			esc_url( strip_tags( $instance['title_link'] ) ),
+			'http://example.com/readings-series/'
+		); ?>
 
 		<?php pis_form_textarea(
 			__( 'Place this text after the title', 'pis' ),
 			$this->get_field_id('intro'),
 			$this->get_field_name('intro'),
 			$instance['intro'],
+			__( 'These posts are part of my Readings series.', 'pis' ),
 			$style = 'resize: vertical; width: 100%; height: 80px;',
 			$comment = sprintf( __( 'Allowed HTML: %s. Other tags will be stripped.', 'pis' ), '<code>a</code>, <code>strong</code>, <code>em</code>' )
 		); ?>
@@ -569,6 +585,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_id('posts_id'),
 				$this->get_field_name('posts_id'),
 				esc_attr( $instance['posts_id'] ),
+				'5, 29, 523, 4519',
 				sprintf( __( 'Insert IDs separated by commas. To easily find the IDs, install %1$sthis plugin%2$s.', 'pis' ), '<a href="http://wordpress.org/plugins/reveal-ids-for-wp-admin-25/" target="_blank">', '</a>' )
 			); ?>
 
@@ -601,6 +618,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_id('cat'),
 				$this->get_field_name('cat'),
 				esc_attr( $instance['cat'] ),
+				__( 'books, ebooks', 'pis' ),
 				sprintf( __( 'Insert slugs separated by commas. To display posts that have all of the categories, use %1$s (a plus) between terms, for example:%2$s%3$s.', 'pis' ), '<code>+</code>', '<br />', '<code>staff+news+our-works</code>' )
 			); ?>
 
@@ -610,6 +628,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_id('tag'),
 				$this->get_field_name('tag'),
 				esc_attr( $instance['tag'] ),
+				__( 'best-sellers', 'pis' ),
 				sprintf( __( 'Insert slugs separated by commas. To display posts that have all of the tags, use %1$s (a plus) between terms, for example:%2$s%3$s.', 'pis' ), '<code>+</code>', '<br />', '<code>staff+news+our-works</code>' )
 			); ?>
 
@@ -641,6 +660,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_id('number'),
 				$this->get_field_name('number'),
 				esc_attr( $instance['number'] ),
+				'3',
 				sprintf( __( 'The value %s shows all the posts.', 'pis' ), '<code>-1</code>' )
 			); ?>
 
@@ -731,7 +751,13 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			); ?>
 
 			<?php // ================= Number of posts to skip
-			pis_form_input_text( __( 'Skip this number of posts', 'pis' ), $this->get_field_id('offset_number'), $this->get_field_name('offset_number'), esc_attr( $instance['offset_number'] ) ); ?>
+			pis_form_input_text(
+				__( 'Skip this number of posts', 'pis' ),
+				$this->get_field_id('offset_number'),
+				$this->get_field_name('offset_number'),
+				esc_attr( $instance['offset_number'] ),
+				'5'
+			); ?>
 
 			<?php // ================= Post status
 			$options = array();
@@ -751,10 +777,22 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			); ?>
 
 			<?php // ================= Post meta key
-			pis_form_input_text( __( 'Get post with this meta key', 'pis' ), $this->get_field_id('post_meta_key'), $this->get_field_name('post_meta_key'), esc_attr( $instance['post_meta_key'] ) ); ?>
+			pis_form_input_text(
+				__( 'Get post with this meta key', 'pis' ),
+				$this->get_field_id('post_meta_key'),
+				$this->get_field_name('post_meta_key'),
+				esc_attr( $instance['post_meta_key'] ),
+				__( 'meta-key', 'pis' )
+			); ?>
 
 			<?php // ================= Post meta value
-			pis_form_input_text( __( 'Get post with this meta value', 'pis' ), $this->get_field_id('post_meta_val'), $this->get_field_name('post_meta_val'), esc_attr( $instance['post_meta_val'] ) ); ?>
+			pis_form_input_text(
+				__( 'Get post with this meta value', 'pis' ),
+				$this->get_field_id('post_meta_val'),
+				$this->get_field_name('post_meta_val'),
+				esc_attr( $instance['post_meta_val'] ),
+				__( 'meta-value', 'pis' )
+			); ?>
 
 			<?php // ================= Ignore sticky post
 			pis_form_checkbox( __( 'Do not display sticky posts on top of other posts', 'pis' ), $this->get_field_id( 'ignore_sticky' ), $this->get_field_name( 'ignore_sticky' ), checked( $ignore_sticky, true, false ), __( 'If you activate this option, sticky posts will be managed as other posts. Sticky post status will be automatically ignored if you set up an author or a taxonomy in this widget.', 'pis' ) ); ?>
@@ -772,6 +810,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_id('post_not_in'),
 				$this->get_field_name('post_not_in'),
 				esc_attr( $instance['post_not_in'] ),
+				'5, 29, 523, 4519',
 				sprintf( __( 'Insert IDs separated by commas. To easily find the IDs, install %1$sthis plugin%2$s.', 'pis' ), '<a href="http://wordpress.org/plugins/reveal-ids-for-wp-admin-25/" target="_blank">', '</a>' )
 			); ?>
 
@@ -785,6 +824,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_id('cat_not_in'),
 				$this->get_field_name('cat_not_in'),
 				esc_attr( $var ),
+				'3, 31',
 				__( 'Insert IDs separated by commas.', 'pis' )
 			); ?>
 
@@ -798,6 +838,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				$this->get_field_id('tag_not_in'),
 				$this->get_field_name('tag_not_in'),
 				esc_attr( $var ),
+				'7, 11',
 				__( 'Insert IDs separated by commas.', 'pis' )
 			); ?>
 
@@ -886,8 +927,26 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 				</em>
 			</p>
 
-			<?php // ================= Positioning image bfore title
+			<?php // ================= Positioning image before title
 			pis_form_checkbox( __( 'Display the image before the title of the post', 'pis' ), $this->get_field_id( 'image_before_title' ), $this->get_field_name( 'image_before_title' ), checked( $image_before_title, true, false ) ); ?>
+
+			<hr />
+
+			<h4 class="pis-gray-title"><?php _e( 'Customized featured image', 'pis' ); ?></h4>
+
+			<?php // ================= Custom image URL
+			pis_form_input_text(
+				__( 'Use this image instead of the standard featured image', 'pis' ),
+				$this->get_field_id( 'custom_image_url' ),
+				$this->get_field_name( 'custom_image_url' ),
+				esc_url( strip_tags( $instance['custom_image_url'] ) ),
+				'http://example.com/image.jpg',
+				__( 'Paste here the URL of the image. Note that the same image will be used for all the posts in the widget, unless you active the checkbox below.', 'pis' )
+			); ?>
+
+			<?php // ================= Use custom image URL only if the post thumbnail is not defined.
+			pis_form_checkbox( __( 'Use custom image URL only if the post thumbnail is not defined.', 'pis' ), $this->get_field_id( 'custom_img_no_thumb' ), $this->get_field_name( 'custom_img_no_thumb' ), checked( $custom_img_no_thumb, true, false ) ); ?>
+
 
 			<hr />
 
@@ -933,10 +992,10 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			); ?>
 
 			<?php // ================= Excerpt length
-			pis_form_input_text( __( 'The WordPress generated excerpt length will be (in words)', 'pis' ), $this->get_field_id( 'exc_length' ), $this->get_field_name( 'exc_length' ), esc_attr( $instance['exc_length'] ) ); ?>
+			pis_form_input_text( __( 'The WordPress generated excerpt length will be (in words)', 'pis' ), $this->get_field_id( 'exc_length' ), $this->get_field_name( 'exc_length' ), esc_attr( $instance['exc_length'] ), '20' ); ?>
 
 			<?php // ================= More link text
-			pis_form_input_text( __( 'Use this text for More link', 'pis' ), $this->get_field_id( 'the_more' ), $this->get_field_name( 'the_more' ), esc_attr( $instance['the_more'] ) ); ?>
+			pis_form_input_text( __( 'Use this text for More link', 'pis' ), $this->get_field_id( 'the_more' ), $this->get_field_name( 'the_more' ), esc_attr( $instance['the_more'] ), __( 'Read more&hellip;', 'pis' ) ); ?>
 
 			<?php // ================= Arrow after the excerpt
 			pis_form_checkbox( __( 'Display an arrow after the "Read more" link', 'pis' ), $this->get_field_id( 'exc_arrow' ), $this->get_field_name( 'exc_arrow' ), checked( $exc_arrow, true, false ) ); ?>
@@ -949,7 +1008,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			pis_form_checkbox( __( 'Display the author of the post', 'pis' ), $this->get_field_id( 'display_author' ), $this->get_field_name( 'display_author' ), checked( $display_author, true, false ) ); ?>
 
 			<?php // ================= Author text
-			pis_form_input_text( __( 'Use this text before author\'s name', 'pis' ), $this->get_field_id( 'author_text' ), $this->get_field_name( 'author_text' ), esc_attr( $instance['author_text'] ) ); ?>
+			pis_form_input_text( __( 'Use this text before author\'s name', 'pis' ), $this->get_field_id( 'author_text' ), $this->get_field_name( 'author_text' ), esc_attr( $instance['author_text'] ), __( 'By', 'pis' ) ); ?>
 
 			<?php // ================= Author archive
 			pis_form_checkbox( __( 'Link the author to his archive', 'pis' ), $this->get_field_id( 'linkify_author' ), $this->get_field_name( 'linkify_author' ), checked( $linkify_author, true, false ) ); ?>
@@ -958,7 +1017,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			pis_form_checkbox( __( 'Display the date of the post', 'pis' ), $this->get_field_id( 'display_date' ), $this->get_field_name( 'display_date' ), checked( $display_date, true, false ) ); ?>
 
 			<?php // ================= Date text
-			pis_form_input_text( __( 'Use this text before date', 'pis' ), $this->get_field_id( 'date_text' ), $this->get_field_name( 'date_text' ), esc_attr( $instance['date_text'] ) ); ?>
+			pis_form_input_text( __( 'Use this text before date', 'pis' ), $this->get_field_id( 'date_text' ), $this->get_field_name( 'date_text' ), esc_attr( $instance['date_text'] ), __( 'Published on', 'pis' ) ); ?>
 
 			<?php // ================= Date link
 			pis_form_checkbox( __( 'Link the date to the post', 'pis' ), $this->get_field_id( 'linkify_date' ), $this->get_field_name( 'linkify_date' ), checked( $linkify_date, true, false ) ); ?>
@@ -967,10 +1026,10 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			pis_form_checkbox( __( 'Display the number of comments', 'pis' ), $this->get_field_id( 'comments' ), $this->get_field_name( 'comments' ), checked( $comments, true, false ) ); ?>
 
 			<?php // ================= Comments text
-			pis_form_input_text( __( 'Use this text before comments number', 'pis' ), $this->get_field_id( 'comments_text' ), $this->get_field_name( 'comments_text' ), esc_attr( $instance['comments_text'] ) ); ?>
+			pis_form_input_text( __( 'Use this text before comments number', 'pis' ), $this->get_field_id( 'comments_text' ), $this->get_field_name( 'comments_text' ), esc_attr( $instance['comments_text'] ), __( 'Comments:', 'pis' ) ); ?>
 
 			<?php // ================= Utility separator
-			pis_form_input_text( __( 'Use this separator between author, date and comments', 'pis' ), $this->get_field_id( 'utility_sep' ), $this->get_field_name( 'utility_sep' ), esc_attr( $instance['utility_sep'] ), __( 'A space will be added before and after the separator.', 'pis' ) ); ?>
+			pis_form_input_text( __( 'Use this separator between author, date and comments', 'pis' ), $this->get_field_id( 'utility_sep' ), $this->get_field_name( 'utility_sep' ), esc_attr( $instance['utility_sep'] ), '|', __( 'A space will be added before and after the separator.', 'pis' ) ); ?>
 
 			<?php // ================= Author
 			pis_form_checkbox( __( 'Display this section after the title of the post', 'pis' ), $this->get_field_id( 'utility_after_title' ), $this->get_field_name( 'utility_after_title' ), checked( $utility_after_title, true, false ) ); ?>
@@ -985,10 +1044,17 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			pis_form_checkbox( __( 'Display the categories of the post', 'pis' ), $this->get_field_id( 'categories' ), $this->get_field_name( 'categories' ), checked( $categories, true, false ) ); ?>
 
 			<?php // ================= Categories text
-			pis_form_input_text( __( 'Use this text before categories list', 'pis' ), $this->get_field_id( 'categ_text' ), $this->get_field_name( 'categ_text' ), esc_attr( $instance['categ_text'] ) ); ?>
+			pis_form_input_text( __( 'Use this text before categories list', 'pis' ), $this->get_field_id( 'categ_text' ), $this->get_field_name( 'categ_text' ), esc_attr( $instance['categ_text'] ), __( 'Category:', 'pis' ) ); ?>
 
 			<?php // ================= Categories separator
-			pis_form_input_text( __( 'Use this separator between categories', 'pis' ), $this->get_field_id( 'categ_sep' ), $this->get_field_name( 'categ_sep' ), esc_attr( $instance['categ_sep'] ), __( 'A space will be added after the separator.', 'pis' ) ); ?>
+			pis_form_input_text(
+				__( 'Use this separator between categories', 'pis' ),
+				$this->get_field_id( 'categ_sep' ),
+				$this->get_field_name( 'categ_sep' ),
+				esc_attr( $instance['categ_sep'] ),
+				',',
+				__( 'A space will be added after the separator.', 'pis' )
+			); ?>
 
 			<hr />
 
@@ -998,13 +1064,20 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			pis_form_checkbox( __( 'Show the tags of the post', 'pis' ), $this->get_field_id( 'tags' ), $this->get_field_name( 'tags' ), checked( $tags, true, false ) ); ?>
 
 			<?php // ================= Tags text
-			pis_form_input_text( __( 'Use this text before tags list', 'pis' ), $this->get_field_id( 'tags_text' ), $this->get_field_name( 'tags_text' ), esc_attr( $instance['tags_text'] ) ); ?>
+			pis_form_input_text( __( 'Use this text before tags list', 'pis' ), $this->get_field_id( 'tags_text' ), $this->get_field_name( 'tags_text' ), esc_attr( $instance['tags_text'] ), __( 'Tags:', 'pis' ) ); ?>
 
 			<?php // ================= Hashtag
-			pis_form_input_text( __( 'Use this hashtag', 'pis' ), $this->get_field_id( 'hashtag' ), $this->get_field_name( 'hashtag' ), esc_attr( $instance['hashtag'] ) ); ?>
+			pis_form_input_text( __( 'Use this hashtag', 'pis' ), $this->get_field_id( 'hashtag' ), $this->get_field_name( 'hashtag' ), esc_attr( $instance['hashtag'] ), '#' ); ?>
 
 			<?php // ================= Tags separator
-			pis_form_input_text( __( 'Use this separator between tags', 'pis' ), $this->get_field_id( 'tag_sep' ), $this->get_field_name( 'tag_sep' ), esc_attr( $instance['tag_sep'] ), __( 'A space will be added after the separator.', 'pis' ) ); ?>
+			pis_form_input_text(
+				__( 'Use this separator between tags', 'pis' ),
+				$this->get_field_id( 'tag_sep' ),
+				$this->get_field_name( 'tag_sep' ),
+				esc_attr( $instance['tag_sep'] ),
+				',',
+				__( 'A space will be added after the separator.', 'pis' )
+			); ?>
 
 			<hr />
 
@@ -1014,7 +1087,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			pis_form_checkbox( __( 'Display the custom field of the post', 'pis' ), $this->get_field_id( 'custom_field' ), $this->get_field_name( 'custom_field' ), checked( $custom_field, true, false ) ); ?>
 
 			<?php // ================= Custom fields text
-			pis_form_input_text( __( 'Use this text before the custom field', 'pis' ), $this->get_field_id( 'custom_field_txt' ), $this->get_field_name( 'custom_field_txt' ), esc_attr( $instance['custom_field_txt'] ) ); ?>
+			pis_form_input_text( __( 'Use this text before the custom field', 'pis' ), $this->get_field_id( 'custom_field_txt' ), $this->get_field_name( 'custom_field_txt' ), esc_attr( $instance['custom_field_txt'] ), __( 'Custom field:', 'pis' ) ); ?>
 
 			<?php // ================= Which custom field
 			$options = array();
@@ -1039,7 +1112,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			pis_form_checkbox( __( 'Also display the key of the custom field', 'pis' ), $this->get_field_id( 'custom_field_key' ), $this->get_field_name( 'custom_field_key' ), checked( $custom_field_key, true, false ) ); ?>
 
 			<?php // ================= Custom field separator
-			pis_form_input_text( __( 'Use this separator between meta key and value', 'pis' ), $this->get_field_id( 'custom_field_sep' ), $this->get_field_name( 'custom_field_sep' ), esc_attr( $instance['custom_field_sep'] ) ); ?>
+			pis_form_input_text( __( 'Use this separator between meta key and value', 'pis' ), $this->get_field_id( 'custom_field_sep' ), $this->get_field_name( 'custom_field_sep' ), esc_attr( $instance['custom_field_sep'] ), ':' ); ?>
 
 			<hr />
 
@@ -1091,19 +1164,36 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 
 
 			<?php // ================= Archive link text
-			pis_form_input_text( __( 'Use this text for archive link', 'pis' ), $this->get_field_id( 'archive_text' ), $this->get_field_name( 'archive_text' ), esc_attr( $instance['archive_text'] ), __( 'Please, note that if you don\'t select any taxonomy, the link won\'t appear.', 'pis' ) ); ?>
+			pis_form_input_text(
+				__( 'Use this text for archive link', 'pis' ),
+				$this->get_field_id( 'archive_text' ),
+				$this->get_field_name( 'archive_text' ),
+				esc_attr( $instance['archive_text'] ),
+				__( 'Display all posts', 'pis' ),
+				__( 'Please, note that if you don\'t select any taxonomy, the link won\'t appear.', 'pis' )
+			); ?>
 
 			<hr />
 
-			<h4 class="pis-gray-title"><?php _e( 'Text when no posts found', 'pis' ); ?></h4>
+			<h4 class="pis-gray-title"><?php _e( 'When no posts are found', 'pis' ); ?></h4>
 
-			<?php // ================= No posts text
+			<?php // ================= When no posts are found
+			// Text when no posts found
 			pis_form_input_text(
 				__( 'Use this text when there are no posts', 'pis' ),
 				$this->get_field_id( 'nopost_text' ),
 				$this->get_field_name( 'nopost_text' ),
 				esc_attr( $instance['nopost_text'] ),
-				__( 'If the field is blank, the whole widget won\'t be displayed at all if no posts are found.', 'pis' )
+				__( 'No posts yet.', 'pis' )
+			); ?>
+
+			<?php
+			// Hide the widget if no posts found
+			pis_form_checkbox(
+				__( 'Completely hide the widget if no posts are found', 'pis' ),
+				$this->get_field_id( 'hide_widget' ),
+				$this->get_field_name( 'hide_widget' ),
+				checked( $hide_widget, true, false )
 			); ?>
 
 		</div>
@@ -1118,6 +1208,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			$this->get_field_id('container_class'),
 			$this->get_field_name('container_class'),
 			esc_attr( $instance['container_class'] ),
+			'posts-container',
 			sprintf(
 				__( 'Enter the name of your container (for example, %1$s). The plugin will add a new %2$s container with this class. You can enter only one class and the name may contain only letters, hyphens and underscores. The new container will enclose all the widget, from the title to the last line.', 'pis' ), '<code>my-container</code>', '<code>div</code>' )
 		); ?>
@@ -1168,6 +1259,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			$this->get_field_id('cache_time'),
 			$this->get_field_name('cache_time'),
 			esc_attr( $instance['cache_time'] ),
+			'3600',
 			sprintf( __( 'For example, %1$s for one hour of cache. To reset the cache, enter %2$s and save the widget.', 'pis' ), '<code>3600</code>', '<code>0</code>' )
 		); ?>
 
@@ -1209,23 +1301,23 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		<?php // ================= Margins ?>
 
 		<div class="pis-column">
-			<?php pis_form_input_text( __( 'Introduction margin', 'pis' ), $this->get_field_id( 'intro_margin' ), $this->get_field_name( 'intro_margin' ), esc_attr( $instance['intro_margin'] ) ); ?>
-			<?php pis_form_input_text( __( 'Title margin', 'pis' ), $this->get_field_id( 'title_margin' ), $this->get_field_name( 'title_margin' ), esc_attr( $instance['title_margin'] ) ); ?>
-			<?php pis_form_input_text( __( 'Left/Right image margin', 'pis' ), $this->get_field_id( 'side_image_margin' ), $this->get_field_name( 'side_image_margin' ), esc_attr( $instance['side_image_margin'] ) ); ?>
-			<?php pis_form_input_text( __( 'Bottom image margin', 'pis' ), $this->get_field_id( 'bottom_image_margin' ), $this->get_field_name( 'bottom_image_margin' ), esc_attr( $instance['bottom_image_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Introduction bottom margin', 'pis' ), $this->get_field_id( 'intro_margin' ), $this->get_field_name( 'intro_margin' ), esc_attr( $instance['intro_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Title bottom margin', 'pis' ), $this->get_field_id( 'title_margin' ), $this->get_field_name( 'title_margin' ), esc_attr( $instance['title_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Image left &amp; right margin', 'pis' ), $this->get_field_id( 'side_image_margin' ), $this->get_field_name( 'side_image_margin' ), esc_attr( $instance['side_image_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Image bottom margin', 'pis' ), $this->get_field_id( 'bottom_image_margin' ), $this->get_field_name( 'bottom_image_margin' ), esc_attr( $instance['bottom_image_margin'] ) ); ?>
 		</div>
 
 		<div class="pis-column">
-			<?php pis_form_input_text( __( 'Excerpt margin', 'pis' ), $this->get_field_id( 'excerpt_margin' ), $this->get_field_name( 'excerpt_margin' ), esc_attr( $instance['excerpt_margin'] ) ); ?>
-			<?php pis_form_input_text( __( 'Utility margin', 'pis' ), $this->get_field_id( 'utility_margin' ), $this->get_field_name( 'utility_margin' ), esc_attr( $instance['utility_margin'] ) ); ?>
-			<?php pis_form_input_text( __( 'Categories margin', 'pis' ), $this->get_field_id( 'categories_margin' ), $this->get_field_name( 'categories_margin' ), esc_attr( $instance['categories_margin'] ) ); ?>
-			<?php pis_form_input_text( __( 'Tags margin', 'pis' ), $this->get_field_id( 'tags_margin' ), $this->get_field_name( 'tags_margin' ), esc_attr( $instance['tags_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Excerpt bottom margin', 'pis' ), $this->get_field_id( 'excerpt_margin' ), $this->get_field_name( 'excerpt_margin' ), esc_attr( $instance['excerpt_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Utility bottom margin', 'pis' ), $this->get_field_id( 'utility_margin' ), $this->get_field_name( 'utility_margin' ), esc_attr( $instance['utility_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Categories bottom margin', 'pis' ), $this->get_field_id( 'categories_margin' ), $this->get_field_name( 'categories_margin' ), esc_attr( $instance['categories_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Tags bottom margin', 'pis' ), $this->get_field_id( 'tags_margin' ), $this->get_field_name( 'tags_margin' ), esc_attr( $instance['tags_margin'] ) ); ?>
 		</div>
 
 		<div class="pis-column-last">
-			<?php pis_form_input_text( __( 'Custom field margin', 'pis' ), $this->get_field_id( 'custom_field_margin' ), $this->get_field_name( 'custom_field_margin' ), esc_attr( $instance['custom_field_margin'] ) ); ?>
-			<?php pis_form_input_text( __( 'Archive margin', 'pis' ), $this->get_field_id( 'archive_margin' ), $this->get_field_name( 'archive_margin' ), esc_attr( $instance['archive_margin'] ) ); ?>
-			<?php pis_form_input_text( __( 'No-posts margin', 'pis' ), $this->get_field_id( 'noposts_margin' ), $this->get_field_name( 'noposts_margin' ), esc_attr( $instance['noposts_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Custom field bottom margin', 'pis' ), $this->get_field_id( 'custom_field_margin' ), $this->get_field_name( 'custom_field_margin' ), esc_attr( $instance['custom_field_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'Archive bottom margin', 'pis' ), $this->get_field_id( 'archive_margin' ), $this->get_field_name( 'archive_margin' ), esc_attr( $instance['archive_margin'] ) ); ?>
+			<?php pis_form_input_text( __( 'No-posts bottom margin', 'pis' ), $this->get_field_id( 'noposts_margin' ), $this->get_field_name( 'noposts_margin' ), esc_attr( $instance['noposts_margin'] ) ); ?>
 		</div>
 
 		<div class="clear"></div>
@@ -1242,6 +1334,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			$this->get_field_id('custom_styles'),
 			$this->get_field_name('custom_styles'),
 			$instance['custom_styles'],
+			'#' . $this->id . ' p.pis-title { text-align: center; }',
 			$style = 'resize: vertical; width: 100%; height: 80px;'
 		); ?>
 

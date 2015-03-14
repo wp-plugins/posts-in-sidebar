@@ -3,7 +3,7 @@
  * Plugin Name: Posts in Sidebar
  * Plugin URI: http://dev.aldolat.it/projects/posts-in-sidebar/
  * Description: Publish a list of posts in your sidebar
- * Version: 1.24
+ * Version: 1.25
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
  * Text Domain: pis
@@ -30,7 +30,7 @@
 /**
  * Define the version of the plugin.
  */
-define( 'PIS_VERSION', '1.24' );
+define( 'PIS_VERSION', '1.25' );
 
 /**
  * The core function.
@@ -46,9 +46,9 @@ function pis_posts_in_sidebar( $args ) {
 		// Posts retrieving
 		'post_type'           => 'post',    // post, page, media, or any custom post type
 		'posts_id'            => '',        // Post/Pages IDs, comma separated
-		'author'              => '',        // Author nicename, NOT name
-		'cat'                 => '',        // Category slugs, comma separated
-		'tag'                 => '',        // Tag slugs, comma separated
+		'author'              => NULL,      // Author nicename, NOT name
+		'cat'                 => NULL,      // Category slugs, comma separated
+		'tag'                 => NULL,      // Tag slugs, comma separated
 		'post_format'         => '',
 		'number'              => get_option( 'posts_per_page' ),
 		'orderby'             => 'date',
@@ -75,6 +75,8 @@ function pis_posts_in_sidebar( $args ) {
 		'image_size'          => 'thumbnail',
 		'image_align'         => 'no_change',
 		'image_before_title'  => false,
+		'custom_image_url'    => '',
+		'custom_img_no_thumb' => true,
 
 		// The text of the post
 		'excerpt'             => 'excerpt', // can be "full_content", "rich_content", "content", "more_excerpt", "excerpt", "none"
@@ -117,8 +119,9 @@ function pis_posts_in_sidebar( $args ) {
 		'link_to'             => 'category',
 		'archive_text'        => __( 'Display all posts', 'pis' ),
 
-		// Text when no posts found
+		// When no posts found
 		'nopost_text'         => __( 'No posts yet.', 'pis' ),
+		'hide_widget'         => false,
 
 		// Extras
 		'list_element'        => 'ul',
@@ -231,21 +234,35 @@ function pis_posts_in_sidebar( $args ) {
 
 			<?php while( $pis_query->have_posts() ) : $pis_query->the_post(); ?>
 
-				<?php // Assign the class 'current-post' if this is the post of the main loop ?>
-				<?php if ( is_single() && $single_post_id == $pis_query->post->ID ) {
-					$postclass = 'current-post pis-li';
-				} else {
-					$postclass = 'pis-li';
-				} ?>
+				<?php
+				/**
+				 * Assign the class 'current-post' if this is the post of the main loop.
+				 *
+				 * @since 1.6
+				 */
+				$current_post_class = ''; 
+				if ( is_single() && $single_post_id == $pis_query->post->ID ) {
+					$current_post_class = ' current-post';
+				} 
 
-				<li <?php pis_class( $postclass, apply_filters( 'pis_li_class', '' ) ); ?>>
+				/**
+				 * Assign the class 'sticky' if the post is sticky.
+				 *
+				 * @since 1.25
+				 */
+				 $sticky_class = '';
+				 if ( is_sticky() ) {
+				 	$sticky_class = ' sticky';
+				 } ?>
+
+				<li <?php pis_class( 'pis-li' . $current_post_class . $sticky_class, apply_filters( 'pis_li_class', '' ) ); ?>>
 
 					<?php /* The thumbnail before the title */ ?>
 					<?php if ( $image_before_title ) : ?>
 
-						<?php if ( $display_image && has_post_thumbnail() ) {
+						<?php if ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) {
 							$title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) );
-							pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = true );
+							pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = true, $custom_image_url, $custom_img_no_thumb );
 						} ?>
 
 					<?php endif; // Close if $image_before_title ?>
@@ -282,9 +299,9 @@ function pis_posts_in_sidebar( $args ) {
 								<?php if ( ! $image_before_title ) : ?>
 
 									<?php /* The thumbnail */ ?>
-									<?php if ( $display_image && has_post_thumbnail() ) {
+									<?php if ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) {
 										$title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) );
-										pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = false );
+										pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = false, $custom_image_url, $custom_img_no_thumb );
 									} // Close if ( $display_image && has_post_thumbnail ) ?>
 
 								<?php endif; // Close if $image_before_title ?>
@@ -398,14 +415,13 @@ function pis_posts_in_sidebar( $args ) {
 	<?php else : ?>
 
 		<?php if ( $nopost_text ) { ?>
-			<ul <?php pis_class( 'pis-ul', apply_filters( 'pis_ul_class', '' ) ); ?>>
-				<li <?php pis_class( 'pis-li pis-noposts', apply_filters( 'pis_nopost_class', '' ) ); ?>>
-					<p <?php echo pis_paragraph( $noposts_margin, $margin_unit, 'noposts', 'pis_noposts_class' ); ?>>
-						<?php echo $nopost_text; ?>
-					</p>
-				</li>
-			</ul>
+			<p <?php echo pis_paragraph( $noposts_margin, $margin_unit, 'pis-noposts noposts', 'pis_noposts_class' ); ?>>
+				<?php echo $nopost_text; ?>
+			</p>
 		<?php } ?>
+		<?php if ( $hide_widget ) {
+			echo '<style type="text/css">#' . $widget_id . ' { display: none; }</style>';
+		} ?>
 
 	<?php endif; ?>
 

@@ -3,8 +3,8 @@ Contributors: aldolat
 Donate link: http://dev.aldolat.it/projects/posts-in-sidebar/
 Tags: post, sidebar, widget
 Requires at least: 3.5
-Tested up to: 4.1
-Stable tag: 1.24
+Tested up to: 4.2
+Stable tag: 1.25
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -61,6 +61,13 @@ Please, see [FAQ page](https://github.com/aldolat/posts-in-sidebar/wiki/FAQ) on 
 6. Displaying the full set of items (categories, date, author, tags, and so on).
 
 == Changelog ==
+
+= 1.25 =
+
+* NEW: Added options to use a custom image instead of the standard featured image (props by joaogsr).
+* NEW: Added class "sticky" if a post is sticky (props by acrok).
+* CHANGE: Added a checkbox to completely hide the widget if no posts are found (instead of removing the "no posts text" in order to do this).
+* Added placeholders in HTML fields.
 
 = 1.24 =
 
