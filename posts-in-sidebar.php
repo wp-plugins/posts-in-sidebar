@@ -3,7 +3,7 @@
  * Plugin Name: Posts in Sidebar
  * Plugin URI: http://dev.aldolat.it/projects/posts-in-sidebar/
  * Description: Publish a list of posts in your sidebar
- * Version: 1.26
+ * Version: 1.27
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
  * Text Domain: pis
@@ -11,7 +11,7 @@
  * License: GPLv3 or later
  */
 
-/* Copyright (C) 2009, 2014  Aldo Latino  (email : aldolat@gmail.com)
+/* Copyright (C) 2009, 2015  Aldo Latino  (email : aldolat@gmail.com)
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,10 +27,80 @@
    along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 /**
- * Define the version of the plugin.
+ * Launch Posts in Sidebar.
+ * 
+ * @since 1.27
  */
-define( 'PIS_VERSION', '1.26' );
+add_action( 'plugins_loaded', 'pis_setup' );
+
+
+/**
+ * Setup Posts in Sidebar.
+ * 
+ * @since 1.27
+ */
+function pis_setup() {
+
+	/* Define the version of the plugin. */
+	define( 'PIS_VERSION', '1.27' );
+
+	/**
+	 * Make plugin available for i18n.
+	 * Translations must be archived in the /languages/ directory.
+	 * The name of each translation file must be, for example:
+	 *
+	 * ITALIAN:
+	 * pis-it_IT.po
+	 * pis-it_IT.mo
+	 *
+	 * GERMAN:
+	 * pis-de_DE.po
+	 * pis-de_DE.po
+	 *
+	 * and so on.
+	 *
+	 * @since 0.1
+	 */
+	load_plugin_textdomain( 'pis', false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
+
+	/**
+	 * Load the plugin's functions.
+	 *
+	 * @since 1.23
+	 */
+	require_once( plugin_dir_path( __FILE__ ) . 'inc/pis-functions.php' );
+
+	/* Load Posts in Sidebar's widgets. */
+	add_action( 'widgets_init', 'pis_load_widgets' );
+}
+
+
+/**
+ * Register the widget
+ *
+ * @since 1.0
+ */
+function pis_load_widgets() {
+
+	/**
+	 * Load the widget's form functions.
+	 *
+	 * @since 1.12
+	 */
+	require_once( plugin_dir_path( __FILE__ ) . 'inc/widget-form-functions.php' );
+
+	/**
+	 * Load the widget's PHP file.
+	 *
+	 * @since 1.1
+	 */
+	require_once( plugin_dir_path( __FILE__ ) . 'inc/posts-in-sidebar-widget.php' );
+
+	register_widget( 'PIS_Posts_In_Sidebar' );
+}
+
 
 /**
  * The core function.
@@ -46,9 +116,9 @@ function pis_posts_in_sidebar( $args ) {
 		// Posts retrieving
 		'post_type'           => 'post',    // post, page, media, or any custom post type
 		'posts_id'            => '',        // Post/Pages IDs, comma separated
-		'author'              => NULL,      // Author nicename, NOT name
-		'cat'                 => NULL,      // Category slugs, comma separated
-		'tag'                 => NULL,      // Tag slugs, comma separated
+		'author'              => '',        // Author nicename
+		'cat'                 => '',        // Category slugs, comma separated
+		'tag'                 => '',        // Tag slugs, comma separated
 		'post_format'         => '',
 		'number'              => get_option( 'posts_per_page' ),
 		'orderby'             => 'date',
@@ -154,15 +224,11 @@ function pis_posts_in_sidebar( $args ) {
 	$args = wp_parse_args( $args, $defaults );
 	extract( $args, EXTR_SKIP );
 
-	$author   == 'NULL' ? $author   = '' : $author   = $author;
-	$cat      == 'NULL' ? $cat      = '' : $cat      = $cat;
-	$tag      == 'NULL' ? $tag      = '' : $tag      = $tag;
-
 	// Some params accept only an array
-	if ( $posts_id    && ! is_array( $posts_id ) )    $posts_id    = explode( ',', $posts_id );    else $posts_id    = NULL;
-	if ( $post_not_in && ! is_array( $post_not_in ) ) $post_not_in = explode( ',', $post_not_in ); else $post_not_in = NULL;
-	if ( $cat_not_in  && ! is_array( $cat_not_in ) )  $cat_not_in  = explode( ',', $cat_not_in );  else $cat_not_in  = NULL;
-	if ( $tag_not_in  && ! is_array( $tag_not_in ) )  $tag_not_in  = explode( ',', $tag_not_in );  else $tag_not_in  = NULL;
+	if ( $posts_id    && ! is_array( $posts_id ) )    $posts_id    = explode( ',', $posts_id );    else $posts_id    = '';
+	if ( $post_not_in && ! is_array( $post_not_in ) ) $post_not_in = explode( ',', $post_not_in ); else $post_not_in = '';
+	if ( $cat_not_in  && ! is_array( $cat_not_in ) )  $cat_not_in  = explode( ',', $cat_not_in );  else $cat_not_in  = '';
+	if ( $tag_not_in  && ! is_array( $tag_not_in ) )  $tag_not_in  = explode( ',', $tag_not_in );  else $tag_not_in  = '';
 
 	// Get the ID of the current post.
 	// This will be used in case the user do not want to display the same post in the main body and in the sidebar.
@@ -374,35 +440,44 @@ function pis_posts_in_sidebar( $args ) {
 
 			$wp_post_type = array( 'post', 'page', 'media', 'any' );
 
-			if ( $link_to == 'author' && isset( $author ) ) {
+			if ( 'author' == $link_to && isset( $author ) ) {
 				$author_infos = get_user_by( 'slug', $author );
 				if ( $author_infos ) {
 					$term_link = get_author_posts_url( $author_infos->ID, $author );
-					$title_text = sprintf( __( 'Display all posts by %s', 'pis' ), $author_infos->display_name );
+					$term_name = $author_infos->display_name;
+					$title_text = sprintf( __( 'Display all posts by %s', 'pis' ), $term_name );
 				}
-			} elseif ( $link_to == 'category' && isset( $cat ) ) {
+			} elseif ( 'category' == $link_to && isset( $cat ) ) {
 				$term_identity = get_term_by( 'slug', $cat, 'category' );
 				if ( $term_identity ) {
 					$term_link = get_category_link( $term_identity->term_id );
-					$title_text = sprintf( __( 'Display all posts archived as %s', 'pis' ), $term_identity->name );
+					$term_name = $term_identity->name;
+					$title_text = sprintf( __( 'Display all posts archived under %s', 'pis' ), $term_name );
 				}
-			} elseif ( $link_to == 'tag' && isset( $tag ) ) {
+			} elseif ( 'tag' == $link_to && isset( $tag ) ) {
 				$term_identity = get_term_by( 'slug', $tag, 'post_tag' );
 				if ( $term_identity ) {
 					$term_link = get_tag_link( $term_identity->term_id );
-					$title_text = sprintf( __( 'Display all posts archived as %s', 'pis' ), $term_identity->name );
+					$term_name = $term_identity->name;
+					$title_text = sprintf( __( 'Display all posts archived under %s', 'pis' ), $term_identity->name );
 				}
 			} elseif ( ! in_array( $post_type, $wp_post_type ) ) {
 				$term_link = get_post_type_archive_link( $link_to );
 				$post_type_object = get_post_type_object( $link_to );
-				$title_text = sprintf( __( 'Display all posts archived as %s', 'pis' ), $post_type_object->labels->name );
+				$term_name = $post_type_object->labels->name;
+				$title_text = sprintf( __( 'Display all %s', 'pis' ), $term_name );
 			} elseif ( term_exists( $link_to, 'post_format' ) && $link_to == $post_format ) {
 				$term_link = get_post_format_link( substr( $link_to, 12 ) );
 				$term_object = get_term_by( 'slug', $link_to, 'post_format' );
-				$title_text = sprintf( __( 'Display all posts with post format %s', 'pis' ), $term_object->name );
+				$term_name = $term_object->name;
+				$title_text = sprintf( __( 'Display all posts with post format %s', 'pis' ), $term_name );
 			}
 
-			if ( isset( $term_link ) ) { ?>
+			if ( isset( $term_link ) ) {
+				if ( strpos( $archive_text, '%s' ) ) {
+					$archive_text = str_replace( '%s', $term_name, $archive_text );
+				}
+			?>
 				<p <?php echo pis_paragraph( $archive_margin, $margin_unit, 'pis-archive-link', 'pis_archive_class' ); ?>>
 					<a <?php pis_class( 'pis-archive-link-class', apply_filters( 'pis_archive_link_class', '' ) ); ?> href="<?php echo $term_link; ?>" title="<?php echo esc_attr( $title_text ); ?>" rel="bookmark">
 						<?php echo $archive_text; ?>
@@ -465,53 +540,6 @@ function pis_posts_in_sidebar( $args ) {
 
 <?php }
 
-
-/**
- * Include the plugin functions.
- *
- * @since 1.23
- */
-include_once( plugin_dir_path( __FILE__ ) . 'inc/pis-functions.php' );
-
-
-/**
- * Include the widget.
- *
- * @since 1.1
- */
-include_once( plugin_dir_path( __FILE__ ) . 'inc/posts-in-sidebar-widget.php' );
-
-
-/**
- * Include the widget form functions.
- *
- * @since 1.12
- */
-include_once( plugin_dir_path( __FILE__ ) . 'inc/widget-form-functions.php' );
-
-
-/**
- * Make plugin available for i18n
- *
- * Translations must be archived in the /languages/ directory
- * The name of each translation file must be:
- *
- * ITALIAN:
- * pis-it_IT.po
- * pis-it_IT.mo
- *
- * GERMAN:
- * pis-de_DE.po
- * pis-de_DE.po
- *
- * and so on.
- *
- * @since 0.1
- */
-function pis_load_languages() {
-	load_plugin_textdomain( 'pis', false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
-}
-add_action( 'plugins_loaded', 'pis_load_languages' );
 
 /***********************************************************************
  *                            CODE IS POETRY
