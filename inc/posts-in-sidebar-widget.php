@@ -223,16 +223,29 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		// Posts retrieving
 		$instance['post_type']           = $new_instance['post_type'];
 		$instance['posts_id']            = strip_tags( $new_instance['posts_id'] );
+			/**
+			 * For historical reasons (for example, see version 1.18 of this plugin),
+			 * the variables $author, $cat, and $tag could have a value of 'NULL' (as string, not the costant NULL).
+			 * This means that in the database we could have this value, so that WordPress will search, for example,
+			 * for posts by author with 'NULL' nicename. We have to convert this wrong value into an empty value.
+			 * This conversion should be safe because $author, $cat, and $tag must be all lowercase
+			 * (according to WordPress slugs management) and, for example, a 'NULL' (uppercase) author nicename couldn't exist.
+			 * 
+			 * @since 1.28
+			 */
 		$instance['author']              = $new_instance['author'];
+			if ( 'NULL' == $instance['author'] ) $instance['author'] = '';
 		$instance['cat']                 = strip_tags( $new_instance['cat'] );
+			if ( 'NULL' == $instance['cat'] ) $instance['cat'] = '';
 		$instance['tag']                 = strip_tags( $new_instance['tag'] );
+			if ( 'NULL' == $instance['tag'] ) $instance['tag'] = '';
 		$instance['post_format']         = $new_instance['post_format'];
 		$instance['number']              = intval( strip_tags( $new_instance['number'] ) );
-			if( $instance['number'] == 0 || ! is_numeric( $instance['number'] ) ) $instance['number'] = get_option( 'posts_per_page' );
+			if ( 0 == $instance['number'] || ! is_numeric( $instance['number'] ) ) $instance['number'] = get_option( 'posts_per_page' );
 		$instance['orderby']             = $new_instance['orderby'];
 		$instance['order']               = $new_instance['order'];
 		$instance['offset_number']       = absint( strip_tags( $new_instance['offset_number'] ) );
-			if( $instance['offset_number'] == 0 || ! is_numeric( $instance['offset_number'] ) ) $instance['offset_number'] = '';
+			if ( 0 == $instance['offset_number'] || ! is_numeric( $instance['offset_number'] ) ) $instance['offset_number'] = '';
 		$instance['post_status']         = $new_instance['post_status'];
 		$instance['post_meta_key']       = strip_tags( $new_instance['post_meta_key'] );
 		$instance['post_meta_val']       = strip_tags( $new_instance['post_meta_val'] );
@@ -260,7 +273,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		// The text of the post
 		$instance['excerpt']             = $new_instance['excerpt'];
 		$instance['exc_length']          = absint( strip_tags( $new_instance['exc_length'] ) );
-			if( $instance['exc_length'] == '' || ! is_numeric( $instance['exc_length'] ) ) $instance['exc_length'] = 20;
+			if ( '' == $instance['exc_length'] || ! is_numeric( $instance['exc_length'] ) ) $instance['exc_length'] = 20;
 		$instance['the_more']            = strip_tags( $new_instance['the_more'] );
 		$instance['exc_arrow']           = isset( $new_instance['exc_arrow'] ) ? 1 : 0;
 
@@ -312,7 +325,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$instance['cached']              = isset( $new_instance['cached'] ) ? 1 : 0;
 		$instance['cache_time']          = strip_tags( $new_instance['cache_time'] );
 			// If cache time is not a numeric value OR is 0, then reset cache. Also set cache time to 3600 if cache is active.
-			if ( ! is_numeric( $new_instance['cache_time'] ) || $new_instance['cache_time'] == 0 ) {
+			if ( ! is_numeric( $new_instance['cache_time'] ) || 0 == $new_instance['cache_time'] ) {
 				delete_transient( $this->id . '_query_cache' );
 				if ( $instance['cached'] ) {
 					$instance['cache_time'] = 3600;
@@ -954,7 +967,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			); ?>
 
 			<?php // ================= Use custom image URL only if the post thumbnail is not defined.
-			pis_form_checkbox( __( 'Use custom image URL only if the post thumbnail is not defined.', 'pis' ), $this->get_field_id( 'custom_img_no_thumb' ), $this->get_field_name( 'custom_img_no_thumb' ), checked( $custom_img_no_thumb, true, false ) ); ?>
+			pis_form_checkbox( __( 'Use custom image URL only if the post has not a featured image.', 'pis' ), $this->get_field_id( 'custom_img_no_thumb' ), $this->get_field_name( 'custom_img_no_thumb' ), checked( $custom_img_no_thumb, true, false ) ); ?>
 
 
 			<hr />

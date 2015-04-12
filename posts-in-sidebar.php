@@ -3,7 +3,7 @@
  * Plugin Name: Posts in Sidebar
  * Plugin URI: http://dev.aldolat.it/projects/posts-in-sidebar/
  * Description: Publish a list of posts in your sidebar
- * Version: 1.27
+ * Version: 1.28
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
  * Text Domain: pis
@@ -44,7 +44,7 @@ add_action( 'plugins_loaded', 'pis_setup' );
 function pis_setup() {
 
 	/* Define the version of the plugin. */
-	define( 'PIS_VERSION', '1.27' );
+	define( 'PIS_VERSION', '1.28' );
 
 	/**
 	 * Make plugin available for i18n.
@@ -114,7 +114,7 @@ function pis_posts_in_sidebar( $args ) {
 		'intro'               => '',
 
 		// Posts retrieving
-		'post_type'           => 'post',    // post, page, media, or any custom post type
+		'post_type'           => 'post',    // post, page, attachment, or any custom post type
 		'posts_id'            => '',        // Post/Pages IDs, comma separated
 		'author'              => '',        // Author nicename
 		'cat'                 => '',        // Category slugs, comma separated
@@ -224,6 +224,17 @@ function pis_posts_in_sidebar( $args ) {
 	$args = wp_parse_args( $args, $defaults );
 	extract( $args, EXTR_SKIP );
 
+	/**
+	 * Check if $author or $cat or $tag are equal to 'NULL' (string).
+	 * If so, make them empty.
+	 * For more informations, see inc/posts-in-sidebar-widget.php, function update().
+	 * 
+	 * @since 1.28
+	 */
+	if ( 'NULL' == $author ) $author = '';
+	if ( 'NULL' == $cat ) $cat = '';
+	if ( 'NULL' == $tag ) $tag = '';
+
 	// Some params accept only an array
 	if ( $posts_id    && ! is_array( $posts_id ) )    $posts_id    = explode( ',', $posts_id );    else $posts_id    = '';
 	if ( $post_not_in && ! is_array( $post_not_in ) ) $post_not_in = explode( ',', $post_not_in ); else $post_not_in = '';
@@ -234,6 +245,16 @@ function pis_posts_in_sidebar( $args ) {
 	// This will be used in case the user do not want to display the same post in the main body and in the sidebar.
 	if ( ( is_single() || is_page() ) && $exclude_current_post ) {
 		$post_not_in[] = get_the_id();
+	}
+
+	/**
+	 * If $post_type is 'attachment', $post_status must be 'inherit'.
+	 *
+	 * @see https://codex.wordpress.org/Class_Reference/WP_Query#Type_Parameters
+	 * @since 1.28
+	 */
+	if ( 'attachment' == $post_type ) {
+		$post_status = 'inherit';
 	}
 
 	// Build the array to get posts
@@ -295,8 +316,12 @@ function pis_posts_in_sidebar( $args ) {
 			// When updating from 1.14, the $list_element variable is empty.
 			if ( ! $list_element ) $list_element = 'ul';
 		?>
-		<?php if ( $remove_bullets && $list_element == 'ul' ) $bullets_style = ' style="list-style-type:none; margin-left:0; padding-left:0;"'; else $bullets_style = ''; ?>
-		<<?php echo $list_element; ?> <?php pis_class( 'pis-ul', apply_filters( 'pis_ul_class', '' ) ); echo $bullets_style; ?>>
+		<?php if ( $remove_bullets && 'ul' == $list_element ) {
+			$bullets_style = ' style="list-style-type:none; margin-left:0; padding-left:0;"';
+		} else {
+			$bullets_style = '';
+		} ?>
+		<?php echo '<' . $list_element; ?> <?php pis_class( 'pis-ul', apply_filters( 'pis_ul_class', '' ) ); echo $bullets_style . '>'; ?>
 
 			<?php while( $pis_query->have_posts() ) : $pis_query->the_post(); ?>
 
@@ -326,9 +351,9 @@ function pis_posts_in_sidebar( $args ) {
 					<?php /* The thumbnail before the title */ ?>
 					<?php if ( $image_before_title ) : ?>
 
-						<?php if ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) {
+						<?php if ( 'attachment' == $post_type || ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) ) {
 							$title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) );
-							pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = true, $custom_image_url, $custom_img_no_thumb );
+							pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = true, $custom_image_url, $custom_img_no_thumb, $post_type );
 						} ?>
 
 					<?php endif; // Close if $image_before_title ?>
@@ -358,16 +383,16 @@ function pis_posts_in_sidebar( $args ) {
 					<?php /* The post content */ ?>
 					<?php if ( ! post_password_required() ) : ?>
 						
-						<?php if ( ( $display_image && has_post_thumbnail() ) || 'none' != $excerpt ) : ?>
+						<?php if ( 'attachment' == $post_type || ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) || 'none' != $excerpt ) : ?>
 
 							<p <?php echo pis_paragraph( $excerpt_margin, $margin_unit, 'pis-excerpt', 'pis_excerpt_class' ); ?>>
 
 								<?php if ( ! $image_before_title ) : ?>
 
 									<?php /* The thumbnail */ ?>
-									<?php if ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) {
+									<?php if ( 'attachment' == $post_type || ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) ) {
 										$title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) );
-										pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = false, $custom_image_url, $custom_img_no_thumb );
+										pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = false, $custom_image_url, $custom_img_no_thumb, $post_type );
 									} // Close if ( $display_image && has_post_thumbnail ) ?>
 
 								<?php endif; // Close if $image_before_title ?>
@@ -432,7 +457,7 @@ function pis_posts_in_sidebar( $args ) {
 
 			<?php endwhile; ?>
 
-		</<?php echo $list_element; ?>>
+		<?php echo '</' . $list_element . '>'; ?>
 		<!-- / ul#pis-ul -->
 
 		<?php /* The link to the entire archive */ ?>
@@ -507,7 +532,7 @@ function pis_posts_in_sidebar( $args ) {
 
 	<?php if ( $debug_query || $debug_params || $debug_query_number ) { ?>
 		<hr />
-		<h3>Debugging</h3>
+		<h3><?php printf( __( 'Debugging (%s)', 'pis' ), PIS_VERSION ); ?></h3>
 	<?php } ?>
 
 	<?php if ( $debug_query ) { ?>
