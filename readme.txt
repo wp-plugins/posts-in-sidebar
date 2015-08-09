@@ -2,9 +2,9 @@
 Contributors: aldolat
 Donate link: http://dev.aldolat.it/projects/posts-in-sidebar/
 Tags: post, sidebar, widget
-Requires at least: 3.5
-Tested up to: 4.2
-Stable tag: 1.28
+Requires at least: 4.1
+Tested up to: 4.3
+Stable tag: 2.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -61,6 +61,23 @@ Please, see [FAQ page](https://github.com/aldolat/posts-in-sidebar/wiki/FAQ) on 
 6. Displaying the full set of items (categories, date, author, tags, and so on).
 
 == Changelog ==
+
+= 2.0 =
+
+* NEW: Support for taxonomy complex queries (requires WordPress 4.1).
+* NEW: Support for date queries.
+* NEW: Support for for getting and excluding posts by multiple authors.
+* NEW: Support for queries based on search.
+* NEW: Support for getting and excluding posts that are children of other posts.
+* NEW: Support for custom taxonomies.
+* NEW: Added support for custom link in featured image (props by troy-f).
+* NEW: Changed appearance for widget sections that are collapsible now.
+* WordPress 4.1 is required (for nested taxonomy handling).
+* Added URL of the site and WordPress version in the debug section.
+* Switched to PHP5 __contruct() in creating the widget.
+* Improved security.
+* Fixed PHP notices when upgrading from previous versions.
+* Updated the Hebrew translation (thanks to Ahrale).
 
 = 1.28 =
 
@@ -267,6 +284,10 @@ Please, see [FAQ page](https://github.com/aldolat/posts-in-sidebar/wiki/FAQ) on 
 * First release of the plugin.
 
 == Upgrade Notice ==
+
+= 2.0 =
+
+This version requires WordPress 4.1 (for nested taxonomy handling).
 
 = 1.28 =
 

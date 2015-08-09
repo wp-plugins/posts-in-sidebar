@@ -3,7 +3,7 @@
  * Plugin Name: Posts in Sidebar
  * Plugin URI: http://dev.aldolat.it/projects/posts-in-sidebar/
  * Description: Publish a list of posts in your sidebar
- * Version: 1.28
+ * Version: 2.0
  * Author: Aldo Latino
  * Author URI: http://www.aldolat.it/
  * Text Domain: pis
@@ -29,6 +29,16 @@
 
 
 /**
+ * Prevent direct access to this file.
+ * 
+ * @since 2.0
+ */
+if ( ! defined( 'WPINC' ) ) {
+	exit( 'No script kiddies please!' );
+}
+
+
+/**
  * Launch Posts in Sidebar.
  * 
  * @since 1.27
@@ -43,8 +53,10 @@ add_action( 'plugins_loaded', 'pis_setup' );
  */
 function pis_setup() {
 
-	/* Define the version of the plugin. */
-	define( 'PIS_VERSION', '1.28' );
+	/**
+	 * Define the version of the plugin.
+	 */
+	define( 'PIS_VERSION', '2.0' );
 
 	/**
 	 * Make plugin available for i18n.
@@ -72,8 +84,38 @@ function pis_setup() {
 	 */
 	require_once( plugin_dir_path( __FILE__ ) . 'inc/pis-functions.php' );
 
-	/* Load Posts in Sidebar's widgets. */
+	/**
+	 * Load Posts in Sidebar's widgets.
+	 */
 	add_action( 'widgets_init', 'pis_load_widgets' );
+
+	/**
+	 * Load the script.
+	 * 
+	 * @since 1.29
+	 */
+	add_action( 'admin_enqueue_scripts', 'pis_load_scripts' );
+}
+
+
+/**
+ * Load the Javascript file.
+ * The file will be loaded only in the widgets admin page.
+ *
+ * @since 1.29
+ */
+function pis_load_scripts( $hook ) {
+ 	if ( $hook != 'widgets.php' ) {
+		return;
+	}
+
+	// Register and enqueue the JS file
+	wp_register_script( 'pis_js', plugins_url( 'assets/js/pis.js', __FILE__ ), array( 'jquery' ), PIS_VERSION, false );
+	wp_enqueue_script( 'pis_js' );
+
+	// Register and enqueue the CSS file
+	wp_enqueue_style( 'pis_style', plugins_url( 'assets/css/pis.css', __FILE__ ), array(), PIS_VERSION, 'all' );
+	wp_enqueue_style( 'pis_style' );
 }
 
 
@@ -117,8 +159,10 @@ function pis_posts_in_sidebar( $args ) {
 		'post_type'           => 'post',    // post, page, attachment, or any custom post type
 		'posts_id'            => '',        // Post/Pages IDs, comma separated
 		'author'              => '',        // Author nicename
+		'author_in'           => '',        // Aurthor IDs
 		'cat'                 => '',        // Category slugs, comma separated
 		'tag'                 => '',        // Tag slugs, comma separated
+		'post_parent_in'      => '',
 		'post_format'         => '',
 		'number'              => get_option( 'posts_per_page' ),
 		'orderby'             => 'date',
@@ -127,13 +171,60 @@ function pis_posts_in_sidebar( $args ) {
 		'post_status'         => 'publish',
 		'post_meta_key'       => '',
 		'post_meta_val'       => '',
+		'search'              => '',
 		'ignore_sticky'       => false,
 
+		// Taxonomies
+		'relation'            => '',
+
+		'taxonomy_aa'         => '',
+		'field_aa'            => 'slug',
+		'terms_aa'            => '',
+		'operator_aa'         => 'IN',
+
+		'relation_a'          => '',
+
+		'taxonomy_ab'         => '',
+		'field_ab'            => 'slug',
+		'terms_ab'            => '',
+		'operator_ab'         => 'IN',
+
+		'taxonomy_ba'         => '',
+		'field_ba'            => 'slug',
+		'terms_ba'            => '',
+		'operator_ba'         => 'IN',
+
+		'relation_b'          => '',
+
+		'taxonomy_bb'         => '',
+		'field_bb'            => 'slug',
+		'terms_bb'            => '',
+		'operator_bb'         => 'IN',
+
+		// Date query
+		'date_year'           => '',
+		'date_month'          => '',
+		'date_week'           => '',
+		'date_day'            => '',
+		'date_hour'           => '',
+		'date_minute'         => '',
+		'date_second'         => '',
+		'date_after_year'     => '',
+		'date_after_month'    => '',
+		'date_after_day'      => '',
+		'date_before_year'    => '',
+		'date_before_month'   => '',
+		'date_before_day'     => '',
+		'date_inclusive'      => '',
+		'date_column'         => '',
+		
 		// Posts exclusion
+		'author_not_in'       => '',
 		'exclude_current_post'=> false,
 		'post_not_in'         => '',
 		'cat_not_in'          => '',        // Category ID, comma separated
 		'tag_not_in'          => '',        // Tag ID, comma separated
+		'post_parent_not_in'  => '',
 
 		// The title of the post
 		'display_title'       => true,
@@ -145,6 +236,7 @@ function pis_posts_in_sidebar( $args ) {
 		'image_size'          => 'thumbnail',
 		'image_align'         => 'no_change',
 		'image_before_title'  => false,
+		'image_link'          => '',
 		'custom_image_url'    => '',
 		'custom_img_no_thumb' => true,
 
@@ -177,6 +269,11 @@ function pis_posts_in_sidebar( $args ) {
 		'hashtag'             => '#',
 		'tag_sep'             => '',
 
+		// The custom taxonomies of the post
+		'display_custom_tax'  => false,
+		'term_hashtag'        => '',
+		'term_sep'            => ',',
+
 		// The custom field
 		'custom_field'        => false,
 		'custom_field_txt'    => '',
@@ -193,16 +290,7 @@ function pis_posts_in_sidebar( $args ) {
 		'nopost_text'         => __( 'No posts yet.', 'pis' ),
 		'hide_widget'         => false,
 
-		// Extras
-		'list_element'        => 'ul',
-		'remove_bullets'      => false,
-
-		// Cache
-		'cached'              => false,
-		'cache_time'          => 3600,
-		'widget_id'           => '',
-
-		// Elements margins
+		// Styles
 		'margin_unit'         => 'px',
 		'intro_margin'        => NULL,
 		'title_margin'        => NULL,
@@ -212,8 +300,18 @@ function pis_posts_in_sidebar( $args ) {
 		'utility_margin'      => NULL,
 		'categories_margin'   => NULL,
 		'tags_margin'         => NULL,
+		'terms_margin'        => NULL,
 		'archive_margin'      => NULL,
 		'noposts_margin'      => NULL,
+
+		// Extras
+		'list_element'        => 'ul',
+		'remove_bullets'      => false,
+
+		// Cache
+		'cached'              => false,
+		'cache_time'          => 3600,
+		'widget_id'           => '',
 
 		// Debug
 		'debug_query'         => false,
@@ -235,14 +333,61 @@ function pis_posts_in_sidebar( $args ) {
 	if ( 'NULL' == $cat ) $cat = '';
 	if ( 'NULL' == $tag ) $tag = '';
 
-	// Some params accept only an array
+	/**
+	 * Some params accept only an array.
+	 */
 	if ( $posts_id    && ! is_array( $posts_id ) )    $posts_id    = explode( ',', $posts_id );    else $posts_id    = '';
 	if ( $post_not_in && ! is_array( $post_not_in ) ) $post_not_in = explode( ',', $post_not_in ); else $post_not_in = '';
 	if ( $cat_not_in  && ! is_array( $cat_not_in ) )  $cat_not_in  = explode( ',', $cat_not_in );  else $cat_not_in  = '';
 	if ( $tag_not_in  && ! is_array( $tag_not_in ) )  $tag_not_in  = explode( ',', $tag_not_in );  else $tag_not_in  = '';
+	if ( $author_in   && ! is_array( $author_in ) )   $author_in   = explode( ',', $author_in );   else $author_in   = '';
+	if ( $author_not_in   && ! is_array( $author_not_in ) )   $author_not_in   = explode( ',', $author_not_in );   else $author_not_in   = '';
+	if ( $post_parent_in  && ! is_array( $post_parent_in ) )  $post_parent_in  = explode( ',', $post_parent_in );  else $post_parent_in  = '';
+	if ( $post_parent_not_in  && ! is_array( $post_parent_not_in ) )  $post_parent_not_in  = explode( ',', $post_parent_not_in );  else $post_parent_not_in  = '';
 
-	// Get the ID of the current post.
-	// This will be used in case the user do not want to display the same post in the main body and in the sidebar.
+	/**
+	 * Build $tax_query parameter (if any).
+	 * It must be an array of array.
+	 * 
+	 * @since 1.29
+	 */
+	$tax_query = pis_tax_query( $relation, $taxonomy_aa, $field_aa, $terms_aa, $operator_aa, $relation_a, $taxonomy_ab, $field_ab, $terms_ab, $operator_ab, $taxonomy_ba, $field_ba, $terms_ba, $operator_ba, $relation_b, $taxonomy_bb, $field_bb, $terms_bb, $operator_bb );
+
+	/**
+	 * Build the array for date query.
+	 * It must be an array of array.
+	 * 
+	 * @since 1.29
+	 */
+	$date_query = array(
+		array(
+			'year'      => $date_year,
+			'month'     => $date_month,
+			'week'      => $date_week,
+			'day'       => $date_day,
+			'hour'      => $date_hour,
+			'minute'    => $date_minute,
+			'second'    => $date_second,
+			'after'     => array (
+				'year'  => $date_after_year,
+				'month' => $date_after_month,
+				'day'   => $date_after_day,
+			),
+			'before'    => array (
+				'year'  => $date_before_year,
+				'month' => $date_before_month,
+				'day'   => $date_before_day,
+			),
+			'inclusive' => $date_inclusive,
+			'column'    => $date_column,
+		)
+	);
+	$date_query = pis_array_remove_empty_keys( $date_query, true );
+
+	/**
+	 * Get the ID of the current post.
+	 * This will be used in case the user do not want to display the same post in the main body and in the sidebar.
+	 */
 	if ( ( is_single() || is_page() ) && $exclude_current_post ) {
 		$post_not_in[] = get_the_id();
 	}
@@ -262,19 +407,26 @@ function pis_posts_in_sidebar( $args ) {
 		'post_type'           => $post_type,
 		'post__in'            => $posts_id,    // Uses ids
 		'author_name'         => $author,      // Uses nicenames
+		'author__in'          => $author_in,   // Uses ids
 		'category_name'       => $cat,         // Uses category slugs
 		'tag'                 => $tag,         // Uses tag slugs 
+		'tax_query'           => $tax_query,   // Uses an array of array
+		'date_query'          => $date_query,  // Uses an array of array
+		'post_parent__in'     => $post_parent_in,
 		'post_format'         => $post_format,
 		'posts_per_page'      => $number,
 		'orderby'             => $orderby,
 		'order'               => $order,
-		'post__not_in'        => $post_not_in, // Uses ids
-		'category__not_in'    => $cat_not_in,  // Uses ids
-		'tag__not_in'         => $tag_not_in,  // uses ids
+		'author__not_in'      => $author_not_in,
+		'post__not_in'        => $post_not_in,        // Uses ids
+		'category__not_in'    => $cat_not_in,         // Uses ids
+		'tag__not_in'         => $tag_not_in,         // uses ids
+		'post_parent__not_in' => $post_parent_not_in, // uses ids
 		'offset'              => $offset_number,
 		'post_status'         => $post_status,
 		'meta_key'            => $post_meta_key,
 		'meta_value'          => $post_meta_val,
+		's'                   => $search,
 		'ignore_sticky_posts' => $ignore_sticky
 	);
 
@@ -353,7 +505,7 @@ function pis_posts_in_sidebar( $args ) {
 
 						<?php if ( 'attachment' == $post_type || ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) ) {
 							$title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) );
-							pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = true, $custom_image_url, $custom_img_no_thumb, $post_type );
+							pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = true, $custom_image_url, $custom_img_no_thumb, $post_type, $image_link );
 						} ?>
 
 					<?php endif; // Close if $image_before_title ?>
@@ -392,7 +544,7 @@ function pis_posts_in_sidebar( $args ) {
 									<?php /* The thumbnail */ ?>
 									<?php if ( 'attachment' == $post_type || ( $display_image && ( has_post_thumbnail() || $custom_image_url ) ) ) {
 										$title_link = sprintf( __( 'Permalink to %s', 'pis' ), the_title_attribute( 'echo=0' ) );
-										pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = false, $custom_image_url, $custom_img_no_thumb, $post_type );
+										pis_the_thumbnail( $display_image, $image_align, $side_image_margin, $bottom_image_margin, $margin_unit, $title_link, $pis_query, $image_size, $thumb_wrap = false, $custom_image_url, $custom_img_no_thumb, $post_type, $image_link );
 									} // Close if ( $display_image && has_post_thumbnail ) ?>
 
 								<?php endif; // Close if $image_before_title ?>
@@ -432,6 +584,11 @@ function pis_posts_in_sidebar( $args ) {
 								?>
 							</p>
 						<?php }
+					} ?>
+
+					<?php /* Custom taxonomies */ ?>
+					<?php if ( $display_custom_tax ) {
+						echo pis_custom_taxonomies_terms_links( $pis_query->post->ID, $term_hashtag, $term_sep, $terms_margin, $margin_unit );
 					} ?>
 
 					<?php /* The post meta */ ?>
@@ -532,7 +689,13 @@ function pis_posts_in_sidebar( $args ) {
 
 	<?php if ( $debug_query || $debug_params || $debug_query_number ) { ?>
 		<hr />
-		<h3><?php printf( __( 'Debugging (%s)', 'pis' ), PIS_VERSION ); ?></h3>
+		<h3><?php printf( __( '%s Debug', 'pis' ), 'Posts in Sidebar' ); ?></h3>
+		<p>
+			<?php global $wp_version;
+			printf( __( 'Site URL: %s', 'pis' ), site_url() . '<br>' );
+			printf( __( 'WP version: %s', 'pis' ), $wp_version . '<br>' );
+			printf( __( 'PiS version: %s', 'pis' ), PIS_VERSION . '<br>' ); ?>
+		</p>
 	<?php } ?>
 
 	<?php if ( $debug_query ) { ?>
