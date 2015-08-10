@@ -73,7 +73,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		echo $before_widget;
 
 		// Add a new container if the "Container Class" is not empty
-		if ( isset( $instance['container_class'] ) ) {
+		if ( isset( $instance['container_class'] ) && ! empty( $container_class ) ) {
 			echo '<div class="' . $instance['container_class'] . '">';
 		}
 
@@ -87,101 +87,101 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		 * Check for non-existent values in the database.
 		 * This avoids PHP notices.
 		 */
-		if ( ! isset( $instance['intro'] ) )                $instance['intro'] = '';
-		if ( ! isset( $instance['post_type'] ) )            $instance['post_type'] = '';
-		if ( ! isset( $instance['posts_id'] ) )             $instance['posts_id'] = '';
-		if ( ! isset( $instance['author_in'] ) )            $instance['author_in'] = '';
-		if ( ! isset( $instance['post_parent_in'] ) )       $instance['post_parent_in'] = '';
-		if ( ! isset( $instance['post_format'] ) )          $instance['post_format'] = '';
-		if ( ! isset( $instance['search'] ) )               $instance['search'] = '';
-		if ( ! isset( $instance['relation'] ) )             $instance['relation'] = '';
-		if ( ! isset( $instance['taxonomy_aa'] ) )          $instance['taxonomy_aa'] = '';
-		if ( ! isset( $instance['field_aa'] ) )             $instance['field_aa'] = '';
-		if ( ! isset( $instance['terms_aa'] ) )             $instance['terms_aa'] = '';
-		if ( ! isset( $instance['operator_aa'] ) )          $instance['operator_aa'] = '';
-		if ( ! isset( $instance['relation_a'] ) )           $instance['relation_a'] = '';
-		if ( ! isset( $instance['taxonomy_ab'] ) )          $instance['taxonomy_ab'] = '';
-		if ( ! isset( $instance['field_ab'] ) )             $instance['field_ab'] = '';
-		if ( ! isset( $instance['terms_ab'] ) )             $instance['terms_ab'] = '';
-		if ( ! isset( $instance['operator_ab'] ) )          $instance['operator_ab'] = '';
-		if ( ! isset( $instance['taxonomy_ba'] ) )          $instance['taxonomy_ba'] = '';
-		if ( ! isset( $instance['field_ba'] ) )             $instance['field_ba'] = '';
-		if ( ! isset( $instance['terms_ba'] ) )             $instance['terms_ba'] = '';
-		if ( ! isset( $instance['operator_ba'] ) )          $instance['operator_ba'] = '';
-		if ( ! isset( $instance['relation_b'] ) )           $instance['relation_b'] = '';
-		if ( ! isset( $instance['taxonomy_bb'] ) )          $instance['taxonomy_bb'] = '';
-		if ( ! isset( $instance['field_bb'] ) )             $instance['field_bb'] = '';
-		if ( ! isset( $instance['terms_bb'] ) )             $instance['terms_bb'] = '';
-		if ( ! isset( $instance['operator_bb'] ) )          $instance['operator_bb'] = '';
-		if ( ! isset( $instance['date_year'] ) )            $instance['date_year'] = '';
-		if ( ! isset( $instance['date_month'] ) )           $instance['date_month'] = '';
-		if ( ! isset( $instance['date_week'] ) )            $instance['date_week'] = '';
-		if ( ! isset( $instance['date_day'] ) )             $instance['date_day'] = '';
-		if ( ! isset( $instance['date_hour'] ) )            $instance['date_hour'] = '';
-		if ( ! isset( $instance['date_minute'] ) )          $instance['date_minute'] = '';
-		if ( ! isset( $instance['date_second'] ) )          $instance['date_second'] = '';
-		if ( ! isset( $instance['date_after_year'] ) )      $instance['date_after_year'] = '';
-		if ( ! isset( $instance['date_after_month'] ) )     $instance['date_after_month'] = '';
-		if ( ! isset( $instance['date_after_day'] ) )       $instance['date_after_day'] = '';
-		if ( ! isset( $instance['date_before_year'] ) )     $instance['date_before_year'] = '';
-		if ( ! isset( $instance['date_before_month'] ) )    $instance['date_before_month'] = '';
-		if ( ! isset( $instance['date_before_day'] ) )      $instance['date_before_day'] = '';
-		if ( ! isset( $instance['date_inclusive'] ) )       $instance['date_inclusive'] = '';
-		if ( ! isset( $instance['date_column'] ) )          $instance['date_column'] = '';
-		if ( ! isset( $instance['author_not_in'] ) )        $instance['author_not_in'] = '';
+		if ( ! isset( $instance['intro'] ) )                $instance['intro']                = '';
+		if ( ! isset( $instance['post_type'] ) )            $instance['post_type']            = '';
+		if ( ! isset( $instance['posts_id'] ) )             $instance['posts_id']             = '';
+		if ( ! isset( $instance['author_in'] ) )            $instance['author_in']            = '';
+		if ( ! isset( $instance['post_parent_in'] ) )       $instance['post_parent_in']       = '';
+		if ( ! isset( $instance['post_format'] ) )          $instance['post_format']          = '';
+		if ( ! isset( $instance['search'] ) )               $instance['search']               = NULL;
+		if ( ! isset( $instance['relation'] ) )             $instance['relation']             = '';
+		if ( ! isset( $instance['taxonomy_aa'] ) )          $instance['taxonomy_aa']          = '';
+		if ( ! isset( $instance['field_aa'] ) )             $instance['field_aa']             = '';
+		if ( ! isset( $instance['terms_aa'] ) )             $instance['terms_aa']             = '';
+		if ( ! isset( $instance['operator_aa'] ) )          $instance['operator_aa']          = '';
+		if ( ! isset( $instance['relation_a'] ) )           $instance['relation_a']           = '';
+		if ( ! isset( $instance['taxonomy_ab'] ) )          $instance['taxonomy_ab']          = '';
+		if ( ! isset( $instance['field_ab'] ) )             $instance['field_ab']             = '';
+		if ( ! isset( $instance['terms_ab'] ) )             $instance['terms_ab']             = '';
+		if ( ! isset( $instance['operator_ab'] ) )          $instance['operator_ab']          = '';
+		if ( ! isset( $instance['taxonomy_ba'] ) )          $instance['taxonomy_ba']          = '';
+		if ( ! isset( $instance['field_ba'] ) )             $instance['field_ba']             = '';
+		if ( ! isset( $instance['terms_ba'] ) )             $instance['terms_ba']             = '';
+		if ( ! isset( $instance['operator_ba'] ) )          $instance['operator_ba']          = '';
+		if ( ! isset( $instance['relation_b'] ) )           $instance['relation_b']           = '';
+		if ( ! isset( $instance['taxonomy_bb'] ) )          $instance['taxonomy_bb']          = '';
+		if ( ! isset( $instance['field_bb'] ) )             $instance['field_bb']             = '';
+		if ( ! isset( $instance['terms_bb'] ) )             $instance['terms_bb']             = '';
+		if ( ! isset( $instance['operator_bb'] ) )          $instance['operator_bb']          = '';
+		if ( ! isset( $instance['date_year'] ) )            $instance['date_year']            = '';
+		if ( ! isset( $instance['date_month'] ) )           $instance['date_month']           = '';
+		if ( ! isset( $instance['date_week'] ) )            $instance['date_week']            = '';
+		if ( ! isset( $instance['date_day'] ) )             $instance['date_day']             = '';
+		if ( ! isset( $instance['date_hour'] ) )            $instance['date_hour']            = '';
+		if ( ! isset( $instance['date_minute'] ) )          $instance['date_minute']          = '';
+		if ( ! isset( $instance['date_second'] ) )          $instance['date_second']          = '';
+		if ( ! isset( $instance['date_after_year'] ) )      $instance['date_after_year']      = '';
+		if ( ! isset( $instance['date_after_month'] ) )     $instance['date_after_month']     = '';
+		if ( ! isset( $instance['date_after_day'] ) )       $instance['date_after_day']       = '';
+		if ( ! isset( $instance['date_before_year'] ) )     $instance['date_before_year']     = '';
+		if ( ! isset( $instance['date_before_month'] ) )    $instance['date_before_month']    = '';
+		if ( ! isset( $instance['date_before_day'] ) )      $instance['date_before_day']      = '';
+		if ( ! isset( $instance['date_inclusive'] ) )       $instance['date_inclusive']       = '';
+		if ( ! isset( $instance['date_column'] ) )          $instance['date_column']          = '';
+		if ( ! isset( $instance['author_not_in'] ) )        $instance['author_not_in']        = '';
 		if ( ! isset( $instance['exclude_current_post'] ) ) $instance['exclude_current_post'] = '';
-		if ( ! isset( $instance['post_not_in'] ) )          $instance['post_not_in'] = '';
-		if ( ! isset( $instance['cat_not_in'] ) )           $instance['cat_not_in'] = '';
-		if ( ! isset( $instance['tag_not_in'] ) )           $instance['tag_not_in'] = '';
-		if ( ! isset( $instance['post_parent_not_in'] ) )   $instance['post_parent_not_in'] = '';
-		if ( ! isset( $instance['image_align'] ) )          $instance['image_align'] = '';
-		if ( ! isset( $instance['image_before_title'] ) )   $instance['image_before_title'] = '';
-		if ( ! isset( $instance['image_link'] ) )           $instance['image_link'] = '';
-		if ( ! isset( $instance['custom_image_url'] ) )     $instance['custom_image_url'] = '';
-		if ( ! isset( $instance['custom_img_no_thumb'] ) )  $instance['custom_img_no_thumb'] = '';
-		if ( ! isset( $instance['the_more'] ) )             $instance['the_more'] = '';
-		if ( ! isset( $instance['display_author'] ) )       $instance['display_author'] = '';
-		if ( ! isset( $instance['author_text'] ) )          $instance['author_text'] = '';
-		if ( ! isset( $instance['linkify_author'] ) )       $instance['linkify_author'] = '';
-		if ( ! isset( $instance['date_text'] ) )            $instance['date_text'] = '';
-		if ( ! isset( $instance['linkify_date'] ) )         $instance['linkify_date'] = '';
-		if ( ! isset( $instance['comments_text'] ) )        $instance['comments_text'] = '';
-		if ( ! isset( $instance['utility_sep'] ) )          $instance['utility_sep'] = '';
-		if ( ! isset( $instance['utility_after_title'] ) )  $instance['utility_after_title'] = '';
-		if ( ! isset( $instance['categories'] ) )           $instance['categories'] = '';
-		if ( ! isset( $instance['categ_text'] ) )           $instance['categ_text'] = '';
-		if ( ! isset( $instance['categ_sep'] ) )            $instance['categ_sep'] = '';
-		if ( ! isset( $instance['display_custom_tax'] ) )   $instance['display_custom_tax'] = '';
-		if ( ! isset( $instance['term_hashtag'] ) )         $instance['term_hashtag'] = '';
-		if ( ! isset( $instance['term_sep'] ) )             $instance['term_sep'] = '';
-		if ( ! isset( $instance['custom_field'] ) )         $instance['custom_field'] = '';
-		if ( ! isset( $instance['custom_field_txt'] ) )     $instance['custom_field_txt'] = '';
-		if ( ! isset( $instance['meta'] ) )                 $instance['meta'] = '';
-		if ( ! isset( $instance['custom_field_key'] ) )     $instance['custom_field_key'] = '';
-		if ( ! isset( $instance['custom_field_sep'] ) )     $instance['custom_field_sep'] = '';
-		if ( ! isset( $instance['nopost_text'] ) )          $instance['nopost_text'] = '';
-		if ( ! isset( $instance['hide_widget'] ) )          $instance['hide_widget'] = '';
-		if ( ! isset( $instance['margin_unit'] ) )          $instance['margin_unit'] = '';
-		if ( ! isset( $instance['intro_margin'] ) )         $instance['intro_margin'] = NULL;
-		if ( ! isset( $instance['title_margin'] ) )         $instance['title_margin'] = NULL;
-		if ( ! isset( $instance['side_image_margin'] ) )    $instance['side_image_margin'] = NULL;
-		if ( ! isset( $instance['bottom_image_margin'] ) )  $instance['bottom_image_margin'] = NULL;
-		if ( ! isset( $instance['excerpt_margin'] ) )       $instance['excerpt_margin'] = NULL;
-		if ( ! isset( $instance['utility_margin'] ) )       $instance['utility_margin'] = NULL;
-		if ( ! isset( $instance['categories_margin'] ) )    $instance['categories_margin'] = NULL;
-		if ( ! isset( $instance['tags_margin'] ) )          $instance['tags_margin'] = NULL;
-		if ( ! isset( $instance['terms_margin'] ) )         $instance['terms_margin'] = NULL;
-		if ( ! isset( $instance['custom_field_margin'] ) )  $instance['custom_field_margin'] = NULL;
-		if ( ! isset( $instance['archive_margin'] ) )       $instance['archive_margin'] = NULL;
-		if ( ! isset( $instance['noposts_margin'] ) )       $instance['noposts_margin'] = NULL;
-		if ( ! isset( $instance['custom_styles'] ) )        $instance['custom_styles'] = '';
-		if ( ! isset( $instance['list_element'] ) )         $instance['list_element'] = '';
-		if ( ! isset( $instance['remove_bullets'] ) )       $instance['remove_bullets'] = '';
-		if ( ! isset( $instance['cached'] ) )               $instance['cached'] = '';
-		if ( ! isset( $instance['cache_time'] ) )           $instance['cache_time'] = '';
-		if ( ! isset( $instance['debug_query'] ) )          $instance['debug_query'] = '';
-		if ( ! isset( $instance['debug_params'] ) )         $instance['debug_params'] = '';
-		if ( ! isset( $instance['debug_query_number'] ) )   $instance['debug_query_number'] = '';
+		if ( ! isset( $instance['post_not_in'] ) )          $instance['post_not_in']          = '';
+		if ( ! isset( $instance['cat_not_in'] ) )           $instance['cat_not_in']           = '';
+		if ( ! isset( $instance['tag_not_in'] ) )           $instance['tag_not_in']           = '';
+		if ( ! isset( $instance['post_parent_not_in'] ) )   $instance['post_parent_not_in']   = '';
+		if ( ! isset( $instance['image_align'] ) )          $instance['image_align']          = '';
+		if ( ! isset( $instance['image_before_title'] ) )   $instance['image_before_title']   = '';
+		if ( ! isset( $instance['image_link'] ) )           $instance['image_link']           = '';
+		if ( ! isset( $instance['custom_image_url'] ) )     $instance['custom_image_url']     = '';
+		if ( ! isset( $instance['custom_img_no_thumb'] ) )  $instance['custom_img_no_thumb']  = '';
+		if ( ! isset( $instance['the_more'] ) )             $instance['the_more']             = '';
+		if ( ! isset( $instance['display_author'] ) )       $instance['display_author']       = '';
+		if ( ! isset( $instance['author_text'] ) )          $instance['author_text']          = '';
+		if ( ! isset( $instance['linkify_author'] ) )       $instance['linkify_author']       = '';
+		if ( ! isset( $instance['date_text'] ) )            $instance['date_text']            = '';
+		if ( ! isset( $instance['linkify_date'] ) )         $instance['linkify_date']         = '';
+		if ( ! isset( $instance['comments_text'] ) )        $instance['comments_text']        = '';
+		if ( ! isset( $instance['utility_sep'] ) )          $instance['utility_sep']          = '';
+		if ( ! isset( $instance['utility_after_title'] ) )  $instance['utility_after_title']  = '';
+		if ( ! isset( $instance['categories'] ) )           $instance['categories']           = '';
+		if ( ! isset( $instance['categ_text'] ) )           $instance['categ_text']           = '';
+		if ( ! isset( $instance['categ_sep'] ) )            $instance['categ_sep']            = '';
+		if ( ! isset( $instance['display_custom_tax'] ) )   $instance['display_custom_tax']   = '';
+		if ( ! isset( $instance['term_hashtag'] ) )         $instance['term_hashtag']         = '';
+		if ( ! isset( $instance['term_sep'] ) )             $instance['term_sep']             = '';
+		if ( ! isset( $instance['custom_field'] ) )         $instance['custom_field']         = '';
+		if ( ! isset( $instance['custom_field_txt'] ) )     $instance['custom_field_txt']     = '';
+		if ( ! isset( $instance['meta'] ) )                 $instance['meta']                 = '';
+		if ( ! isset( $instance['custom_field_key'] ) )     $instance['custom_field_key']     = '';
+		if ( ! isset( $instance['custom_field_sep'] ) )     $instance['custom_field_sep']     = '';
+		if ( ! isset( $instance['nopost_text'] ) )          $instance['nopost_text']          = '';
+		if ( ! isset( $instance['hide_widget'] ) )          $instance['hide_widget']          = '';
+		if ( ! isset( $instance['margin_unit'] ) )          $instance['margin_unit']          = '';
+		if ( ! isset( $instance['intro_margin'] ) )         $instance['intro_margin']         = NULL;
+		if ( ! isset( $instance['title_margin'] ) )         $instance['title_margin']         = NULL;
+		if ( ! isset( $instance['side_image_margin'] ) )    $instance['side_image_margin']    = NULL;
+		if ( ! isset( $instance['bottom_image_margin'] ) )  $instance['bottom_image_margin']  = NULL;
+		if ( ! isset( $instance['excerpt_margin'] ) )       $instance['excerpt_margin']       = NULL;
+		if ( ! isset( $instance['utility_margin'] ) )       $instance['utility_margin']       = NULL;
+		if ( ! isset( $instance['categories_margin'] ) )    $instance['categories_margin']    = NULL;
+		if ( ! isset( $instance['tags_margin'] ) )          $instance['tags_margin']          = NULL;
+		if ( ! isset( $instance['terms_margin'] ) )         $instance['terms_margin']         = NULL;
+		if ( ! isset( $instance['custom_field_margin'] ) )  $instance['custom_field_margin']  = NULL;
+		if ( ! isset( $instance['archive_margin'] ) )       $instance['archive_margin']       = NULL;
+		if ( ! isset( $instance['noposts_margin'] ) )       $instance['noposts_margin']       = NULL;
+		if ( ! isset( $instance['custom_styles'] ) )        $instance['custom_styles']        = '';
+		if ( ! isset( $instance['list_element'] ) )         $instance['list_element']         = '';
+		if ( ! isset( $instance['remove_bullets'] ) )       $instance['remove_bullets']       = '';
+		if ( ! isset( $instance['cached'] ) )               $instance['cached']               = '';
+		if ( ! isset( $instance['cache_time'] ) )           $instance['cache_time']           = '';
+		if ( ! isset( $instance['debug_query'] ) )          $instance['debug_query']          = '';
+		if ( ! isset( $instance['debug_params'] ) )         $instance['debug_params']         = '';
+		if ( ! isset( $instance['debug_query_number'] ) )   $instance['debug_query_number']   = '';
 
 		/* 
 		 * Execute the main function in the front-end.
@@ -361,7 +361,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'debug_query_number'  => $instance['debug_query_number'],
 		) );
 
-		if ( isset( $instance['container_class'] ) ) {
+		if ( isset( $instance['container_class'] ) && ! empty( $container_class ) ) {
 			echo '</div>';
 		}
 
@@ -426,6 +426,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$instance['post_meta_key']       = strip_tags( $new_instance['post_meta_key'] );
 		$instance['post_meta_val']       = strip_tags( $new_instance['post_meta_val'] );
 		$instance['search']              = strip_tags( $new_instance['search'] );
+			if ( '' == $instance['search'] ) $instance['search'] = NULL;
 		$instance['ignore_sticky']       = isset( $new_instance['ignore_sticky'] ) ? 1 : 0;
 
 		// Taxonomies
@@ -561,29 +562,29 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		// Styles
 		$instance['margin_unit']         = $new_instance['margin_unit'];
 		$instance['intro_margin']        = strip_tags( $new_instance['intro_margin'] );
-			if ( ! is_numeric( $new_instance['intro_margin'] ) ) $instance['intro_margin'] = NULL;
+			if ( ! is_numeric( $instance['intro_margin'] ) ) $instance['intro_margin'] = NULL;
 		$instance['title_margin']        = strip_tags( $new_instance['title_margin'] );
-			if ( ! is_numeric( $new_instance['title_margin'] ) ) $instance['title_margin'] = NULL;
+			if ( ! is_numeric( $instance['title_margin'] ) ) $instance['title_margin'] = NULL;
 		$instance['side_image_margin']   = $new_instance['side_image_margin'];
-			if ( ! is_numeric( $new_instance['side_image_margin'] ) ) $instance['side_image_margin'] = NULL;
+			if ( ! is_numeric( $instance['side_image_margin'] ) ) $instance['side_image_margin'] = NULL;
 		$instance['bottom_image_margin'] = $new_instance['bottom_image_margin'];
-			if ( ! is_numeric( $new_instance['bottom_image_margin'] ) ) $instance['bottom_image_margin'] = NULL;
+			if ( ! is_numeric( $instance['bottom_image_margin'] ) ) $instance['bottom_image_margin'] = NULL;
 		$instance['excerpt_margin']      = strip_tags( $new_instance['excerpt_margin'] );
-			if ( ! is_numeric( $new_instance['excerpt_margin'] ) ) $instance['excerpt_margin'] = NULL;
+			if ( ! is_numeric( $instance['excerpt_margin'] ) ) $instance['excerpt_margin'] = NULL;
 		$instance['utility_margin']      = strip_tags( $new_instance['utility_margin'] );
-			if ( ! is_numeric( $new_instance['utility_margin'] ) ) $instance['utility_margin'] = NULL;
+			if ( ! is_numeric( $instance['utility_margin'] ) ) $instance['utility_margin'] = NULL;
 		$instance['categories_margin']   = strip_tags( $new_instance['categories_margin'] );
-			if ( ! is_numeric( $new_instance['categories_margin'] ) ) $instance['categories_margin'] = NULL;
+			if ( ! is_numeric( $instance['categories_margin'] ) ) $instance['categories_margin'] = NULL;
 		$instance['tags_margin']         = strip_tags( $new_instance['tags_margin'] );
-			if ( ! is_numeric( $new_instance['tags_margin'] ) ) $instance['tags_margin'] = NULL;
+			if ( ! is_numeric( $instance['tags_margin'] ) ) $instance['tags_margin'] = NULL;
 		$instance['terms_margin']        = strip_tags( $new_instance['terms_margin'] );
-			if ( ! is_numeric( $new_instance['terms_margin'] ) ) $instance['terms_margin'] = NULL;
+			if ( ! is_numeric( $instance['terms_margin'] ) ) $instance['terms_margin'] = NULL;
 		$instance['custom_field_margin'] = strip_tags( $new_instance['custom_field_margin'] );
-			if ( ! is_numeric( $new_instance['custom_field_margin'] ) ) $instance['custom_field_margin'] = NULL;
+			if ( ! is_numeric( $instance['custom_field_margin'] ) ) $instance['custom_field_margin'] = NULL;
 		$instance['archive_margin']      = strip_tags( $new_instance['archive_margin'] );
-			if ( ! is_numeric( $new_instance['archive_margin'] ) ) $instance['archive_margin'] = NULL;
+			if ( ! is_numeric( $instance['archive_margin'] ) ) $instance['archive_margin'] = NULL;
 		$instance['noposts_margin']      = strip_tags( $new_instance['noposts_margin'] );
-			if ( ! is_numeric( $new_instance['noposts_margin'] ) ) $instance['noposts_margin'] = NULL;
+			if ( ! is_numeric( $instance['noposts_margin'] ) ) $instance['noposts_margin'] = NULL;
 		$instance['custom_styles']       = strip_tags( $new_instance['custom_styles'] );
 
 		// Extras
@@ -645,7 +646,7 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'post_status'         => 'publish',
 			'post_meta_key'       => '',
 			'post_meta_val'       => '',
-			'search'              => '',
+			'search'              => NULL,
 			'ignore_sticky'       => false,
 			
 			// Taxonomies
@@ -823,6 +824,16 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$debug_query          = (bool) $instance['debug_query'];
 		$debug_params         = (bool) $instance['debug_params'];
 		$debug_query_number   = (bool) $instance['debug_query_number'];
+
+		/**
+		* When upgrading from old version, $author, $cat, and $tag could be 'NULL' (as string).
+		* See above for more informations (the long note on function update).
+		* 
+		* @since 2.0.3
+		*/
+		if ( 'NULL' == $instance['author'] ) $instance['author'] = '';
+		if ( 'NULL' == $instance['cat'] )    $instance['cat']    = '';
+		if ( 'NULL' == $instance['tag'] )    $instance['tag']    = '';
 		?>
 
 		<!-- Widget title -->
