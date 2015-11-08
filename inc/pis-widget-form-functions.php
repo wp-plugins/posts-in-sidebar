@@ -7,7 +7,7 @@
 
 /**
  * Prevent direct access to this file.
- * 
+ *
  * @since 2.0
  */
 if ( ! defined( 'WPINC' ) ) {
@@ -82,9 +82,10 @@ function pis_form_textarea( $label, $id, $name, $text, $placeholder = '', $style
  * @param string $comment An optional comment to display. It is displayed below the checkbox form.
  * @since 1.12
  */
-function pis_form_checkbox( $label, $id, $name, $checked, $comment = '' ) {
+function pis_form_checkbox( $label, $id, $name, $checked, $comment = '', $class = '' ) {
 	echo '<p>';
-	echo '<input class="checkbox" type="checkbox" ' . $checked . ' id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" />&nbsp;';
+	if ( $class ) $class = ' ' . $class;
+	echo '<input class="checkbox' . $class . '" type="checkbox" ' . $checked . ' id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" />&nbsp;';
 	pis_form_label( $label, $id );
 	if ( $comment ) echo '<br /><em>' . $comment . '</em>';
 	echo '</p>';
@@ -100,12 +101,14 @@ function pis_form_checkbox( $label, $id, $name, $checked, $comment = '' ) {
  * @param string $options The options to display.
  * @param string $value The values of the select form.
  * @param string $comment An optional comment to display. It is displayed below the select form.
+ * @param string $class The custom class for the select element.
  * @since 1.12
  */
-function pis_form_select( $label, $id, $name, $options, $value, $comment = '' ) {
+function pis_form_select( $label, $id, $name, $options, $value, $comment = '', $class = '' ) {
 	echo '<p>';
 	pis_form_label( $label, $id );
-	echo '&nbsp;<select name="' . $name . '">';
+	if ( $class ) $class = ' class="' . $class . '"';
+	echo '&nbsp;<select name="' . $name . '"' . $class . '>';
 		foreach ( $options as $option ) {
 			$selected = selected( $option['value'], $value, false );
 			echo '<option ' . $selected . ' value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['desc'] ) . '</option>';
