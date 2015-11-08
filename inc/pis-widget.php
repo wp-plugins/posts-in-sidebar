@@ -152,6 +152,9 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		if ( ! isset( $instance['gravatar_position'] ) )    $instance['gravatar_position']    = 'next_author';
 		if ( ! isset( $instance['date_text'] ) )            $instance['date_text']            = __( 'Published on', 'posts-in-sidebar' );
 		if ( ! isset( $instance['linkify_date'] ) )         $instance['linkify_date']         = false;
+		if ( ! isset( $instance['display_mod_date'] ) )     $instance['display_mod_date']     = false;
+		if ( ! isset( $instance['mod_date_text'] ) )        $instance['mod_date_text']        = __( 'Modified on', 'posts-in-sidebar' );
+		if ( ! isset( $instance['linkify_mod_date'] ) )     $instance['linkify_mod_date']     = false;
 		if ( ! isset( $instance['comments_text'] ) )        $instance['comments_text']        = __( 'Comments:', 'posts-in-sidebar' );
 		if ( ! isset( $instance['linkify_comments'] ) )     $instance['linkify_comments']     = true;
 		if ( ! isset( $instance['utility_sep'] ) )          $instance['utility_sep']          = '|';
@@ -313,6 +316,9 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'display_date'        => $instance['display_date'],
 			'date_text'           => $instance['date_text'],
 			'linkify_date'        => $instance['linkify_date'],
+			'display_mod_date'    => $instance['display_mod_date'],
+			'mod_date_text'       => $instance['mod_date_text'],
+			'linkify_mod_date'    => $instance['linkify_mod_date'],
 			'comments'            => $instance['comments'],
 			'comments_text'       => $instance['comments_text'],
 			'linkify_comments'    => $instance['linkify_comments'],
@@ -560,6 +566,9 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$instance['display_date']        = isset( $new_instance['display_date'] ) ? 1 : 0;
 		$instance['date_text']           = strip_tags( $new_instance['date_text'] );
 		$instance['linkify_date']        = isset( $new_instance['linkify_date'] ) ? 1 : 0;
+		$instance['display_mod_date']    = isset( $new_instance['display_mod_date'] ) ? 1 : 0;
+		$instance['mod_date_text']       = strip_tags( $new_instance['mod_date_text'] );
+		$instance['linkify_mod_date']    = isset( $new_instance['linkify_mod_date'] ) ? 1 : 0;
 		$instance['comments']            = isset( $new_instance['comments'] ) ? 1 : 0;
 		$instance['comments_text']       = strip_tags( $new_instance['comments_text'] );
 		$instance['linkify_comments']    = isset( $new_instance['linkify_comments'] ) ? 1 : 0;
@@ -774,6 +783,9 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 			'display_date'        => false,
 			'date_text'           => __( 'Published on', 'posts-in-sidebar' ),
 			'linkify_date'        => false,
+			'display_mod_date'    => false,
+			'mod_date_text'       => __( 'Modified on', 'posts-in-sidebar' ),
+			'linkify_mod_date'    => false,
 			'comments'            => false,
 			'comments_text'       => __( 'Comments:', 'posts-in-sidebar' ),
 			'linkify_comments'    => true,
@@ -861,6 +873,8 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 		$gravatar_display     = (bool) $instance['gravatar_display'];
 		$display_date         = (bool) $instance['display_date'];
 		$linkify_date         = (bool) $instance['linkify_date'];
+		$display_mod_date     = (bool) $instance['display_mod_date'];
+		$linkify_mod_date     = (bool) $instance['linkify_mod_date'];
 		$comments             = (bool) $instance['comments'];
 		$linkify_comments     = (bool) $instance['linkify_comments'];
 		$categories           = (bool) $instance['categories'];
@@ -2081,37 +2095,12 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 								<?php // ================= Author gravatar
 								pis_form_checkbox( __( 'Display author\'s Gravatar', 'posts-in-sidebar' ), $this->get_field_id( 'gravatar_display' ), $this->get_field_name( 'gravatar_display' ), checked( $gravatar_display, true, false ), '', 'pis-gravatar' ); ?>
 
-							</div>
-
-							<div class="pis-column">
-
-								<?php // ================= Utility separator
-								pis_form_input_text( __( 'Use this separator between author, date and comments', 'posts-in-sidebar' ), $this->get_field_id( 'utility_sep' ), $this->get_field_name( 'utility_sep' ), esc_attr( $instance['utility_sep'] ), '|', __( 'A space will be added before and after the separator.', 'posts-in-sidebar' ) ); ?>
-
-							</div>
-
-							<div class="pis-column">
-
-								<?php // ================= Section position
-								pis_form_checkbox( __( 'Display this section after the title of the post', 'posts-in-sidebar' ), $this->get_field_id( 'utility_after_title' ), $this->get_field_name( 'utility_after_title' ), checked( $utility_after_title, true, false ) ); ?>
-
-							</div>
-
-						</div>
-
-						<div class="pis-column-container pis-gravatar-options">
-
-							<div class="pis-column">
 								<?php // ================= Gravatar size
 								pis_form_input_text( __( 'Gravatar size', 'posts-in-sidebar' ), $this->get_field_id( 'gravatar_size' ), $this->get_field_name( 'gravatar_size' ), esc_attr( $instance['gravatar_size'] ), '32' ); ?>
-							</div>
 
-							<div class="pis-column">
 								<?php // ================= Gravatar default image
 								pis_form_input_text( __( 'URL of the default Gravatar image', 'posts-in-sidebar' ), $this->get_field_id( 'gravatar_default' ), $this->get_field_name( 'gravatar_default' ), esc_attr( $instance['gravatar_default'] ), 'http://example.com/image.jpg' ); ?>
-							</div>
 
-							<div class="pis-column">
 								<?php // ================= Gravatar position
 								$options = array(
 									'next_title' => array(
@@ -2128,6 +2117,30 @@ class PIS_Posts_In_Sidebar extends WP_Widget {
 									),
 								);
 								pis_form_select( __( 'Gravatar position', 'posts-in-sidebar' ), $this->get_field_id('gravatar_position'), $this->get_field_name('gravatar_position'), $options, $instance['gravatar_position'] ); ?>
+
+							</div>
+
+							<div class="pis-column">
+
+								<?php // ================= Modification Date
+								pis_form_checkbox( __( 'Display the modification date of the post', 'posts-in-sidebar' ), $this->get_field_id( 'display_mod_date' ), $this->get_field_name( 'display_mod_date' ), checked( $display_mod_date, true, false ) ); ?>
+
+								<?php // ================= Modification Date text
+								pis_form_input_text( __( 'Use this text before modification date', 'posts-in-sidebar' ), $this->get_field_id( 'mod_date_text' ), $this->get_field_name( 'mod_date_text' ), esc_attr( $instance['mod_date_text'] ), __( 'Modified on', 'posts-in-sidebar' ) ); ?>
+
+								<?php // ================= Modification Date link
+								pis_form_checkbox( __( 'Link the modification date to the post', 'posts-in-sidebar' ), $this->get_field_id( 'linkify_mod_date' ), $this->get_field_name( 'linkify_mod_date' ), checked( $linkify_mod_date, true, false ) ); ?>
+
+							</div>
+
+							<div class="pis-column">
+
+								<?php // ================= Utility separator
+								pis_form_input_text( __( 'Use this separator between author, date and comments', 'posts-in-sidebar' ), $this->get_field_id( 'utility_sep' ), $this->get_field_name( 'utility_sep' ), esc_attr( $instance['utility_sep'] ), '|', __( 'A space will be added before and after the separator.', 'posts-in-sidebar' ) ); ?>
+
+								<?php // ================= Section position
+								pis_form_checkbox( __( 'Display this section after the title of the post', 'posts-in-sidebar' ), $this->get_field_id( 'utility_after_title' ), $this->get_field_name( 'utility_after_title' ), checked( $utility_after_title, true, false ) ); ?>
+
 							</div>
 
 						</div>
